@@ -11,8 +11,8 @@ Route::post('/login', LoginController::class)->name('login');
 Route::post('/register', [RegisteredUserController::class, 'store']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/profile/me', [ProfileController::class, 'show'])->name('profile.me');
-    
+    Route::get('/profile/me', [ProfileController::class, 'getUserProfile'])->name('profile.me');
+
     Route::post('/logout', LogoutController::class)->name('logout');
     
 
