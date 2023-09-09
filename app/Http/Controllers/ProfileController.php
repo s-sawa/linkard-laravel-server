@@ -26,22 +26,20 @@ class ProfileController extends Controller
      * Display the specified resource.
      */
     public function show()
-    {
-        //ログイン中のユーザー情報を取得
+    { 
         $user = auth()->user();
-        return response()->json($user);
-    }
 
-    public function getUserProfile(Request $request)
-    {
-        // ログイン中のユーザー情報を取得
-        $user = $request->user();
+        // 趣味のデータを取得
+        $hobbies = $user->hobbies; // Userモデルで定義したリレーションを介して取得
+        // $otherData = $user->others;
+        // $freePosts = $user->freePosts;
 
-        // ユーザーの趣味情報をロード
-        $user->load('hobbies');
-
-        // レスポンスとしてJSONを返す
-        return response()->json($user);
+        return response()->json([
+            'user' => $user,
+            'hobbies' => $hobbies,
+            // 'otherData' => $otherData,
+            // 'freePosts' => $freePosts,
+        ]);
     }
 
     /**
