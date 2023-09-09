@@ -29,8 +29,18 @@ class ProfileController extends Controller
     {
         //ログイン中のユーザー情報を取得
         $user = auth()->user();
-        // $user = auth()->user()->load('hobbies', 'hobbyLikes');
+        return response()->json($user);
+    }
 
+    public function getUserProfile(Request $request)
+    {
+        // ログイン中のユーザー情報を取得
+        $user = $request->user();
+
+        // ユーザーの趣味情報をロード
+        $user->load('hobbies');
+
+        // レスポンスとしてJSONを返す
         return response()->json($user);
     }
 
