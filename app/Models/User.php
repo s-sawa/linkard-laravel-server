@@ -23,7 +23,6 @@ class User extends Authenticatable
         'email',
         'password',
         'birthday',
-        // 'birthdate',
         'comment',
         'theme_color_id',
         'group_id',

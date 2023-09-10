@@ -20,29 +20,50 @@ class ProfileController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        // 現在のログインユーザーを取得
-        $user = auth()->user();
-        // $user = Auth::user();
+   public function store(Request $request)
+{
+    // 現在のログインユーザーを取得
+    $user = auth()->user();
 
-        // ユーザーの情報を更新
-        $user->birthday = $request->birthday;
-        $user->comment = $request->comment;
-        // ... その他のカラムも必要に応じて追加
-        $user->save();
 
-        // 既存の趣味を削除する場合（必要に応じて）
+    // ユーザーの情報を更新
+    $user->birthday = $request->birthday;
+    $user->comment = $request->comment;
 
-        // 作成されたユーザーのIDを使用して、趣味をHobbiesテーブルに保存します
-        foreach ($request->hobbies as $hobbyData) {
+    // 画像アップロードの処理
+    if ($request->hasFile('profile_image')) {
+        $image = $request->file('profile_image');
+        // ファイル名を一意のものにする（例：timestamp_originalname.jpg）
+        $filename = time() . '_' . $image->getClientOriginalName();
+        // 画像をpublic/profile_imagesディレクトリに保存
+        $image->move(public_path('profile_images'), $filename);
+
+        // 保存した画像のパスをユーザーテーブルに保存
+        $user->profile_image_path = 'profile_images/' . $filename;
+    }
+    // ... その他のカラムも必要に応じて追加
+    $user->save();
+
+    // 作成されたユーザーのIDを使用して、趣味をHobbiesテーブルに保存します
+    $hobbies = $request->input('hobbies');
+    
+    if (is_array($hobbies)) {
+        foreach ($hobbies as $hobby) {
             Hobby::create([
                 'user_id' => $user->id,
-                'hobby' => $hobbyData['hobby']
+                'hobby' => $hobby['hobby']
             ]);
         }
-        return response()->json(['message' => 'Profile and hobbies updated successfully.']);
+    } else {
+        Hobby::create([
+            'user_id' => $user->id,
+            'hobby' => $hobbies
+        ]);
     }
+
+    return response()->json(['message' => 'Profile and hobbies updated successfully.']);
+}
+
 
 
     /**
