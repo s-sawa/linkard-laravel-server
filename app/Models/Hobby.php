@@ -9,6 +9,8 @@ class Hobby extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['user_id', 'hobby'];
+
     public function user()
     {
         return $this->belongsTo(User::class);

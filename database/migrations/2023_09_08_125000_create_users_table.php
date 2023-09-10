@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->date('birthdate')->nullable();
-            $table->date('comment')->nullable();
+            $table->date('birthday')->nullable();
+            $table->text('comment')->nullable();
             $table->foreignId('theme_color_id')->nullable()->constrained();
             $table->foreignId('group_id')->nullable()->constrained();
             $table->string('profile_image_path')->nullable(); // プロフィール画像のパス
