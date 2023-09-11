@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FreePost;
 use App\Models\Hobby;
+use App\Models\Other;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,6 +32,7 @@ class ProfileController extends Controller
     $user->birthday = $request->birthday;
     $user->comment = $request->comment;
 
+
     // 画像アップロードの処理
     if ($request->hasFile('profile_image')) {
         $image = $request->file('profile_image');
@@ -39,9 +42,9 @@ class ProfileController extends Controller
         $image->move(public_path('profile_images'), $filename);
 
         // 保存した画像のパスをユーザーテーブルに保存
+        // profile_image_path はカラム名
         $user->profile_image_path = 'profile_images/' . $filename;
     }
-    // ... その他のカラムも必要に応じて追加
     $user->save();
 
     // 作成されたユーザーのIDを使用して、趣味をHobbiesテーブルに保存します
@@ -61,10 +64,47 @@ class ProfileController extends Controller
         ]);
     }
 
+    // その他のデータを保存
+    $others = $request->input('others');
+    if (is_array($others)) {
+        foreach ($others as $other) {
+            // その他のモデルに合わせて調整
+            Other::create([
+                'user_id' => $user->id,
+                'name' => $other['name']
+            ]);
+        }
+    } else {
+        // その他のモデルに合わせて調整
+        Other::create([
+            'user_id' => $user->id,
+            'name' => $others
+        ]);
+    }
+
+    if ($request->hasFile('free_image')) {
+        $image = $request->file('free_image');
+        $filename = time() . '_' . $image->getClientOriginalName();
+        // 画像をpublic/profile_imagesディレクトリに保存
+        $image->move(public_path('free_images'), $filename);
+
+        // 保存した画像のパスをユーザーテーブルに保存
+        // profile_image_path はカラム名
+        $user->profile_image_path = 'profile_images/' . $filename;
+    }
+
+
+
+
+    // フリー投稿
+    FreePost::create([
+        'user_id' => $user->id,
+        'title' => $request->title,
+        'description' => $request->description,
+    ]);
+
     return response()->json(['message' => 'Profile and hobbies updated successfully.']);
 }
-
-
 
     /**
      * Display the specified resource.
