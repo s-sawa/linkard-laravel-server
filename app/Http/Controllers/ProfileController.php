@@ -37,13 +37,19 @@ class ProfileController extends Controller
     if ($request->hasFile('profile_image')) {
         $image = $request->file('profile_image');
         // ファイル名を一意のものにする（例：timestamp_originalname.jpg）
+        $userDirectory = 'user_images/user' . auth()->user()->id .'/profile_image';
+
         $filename = time() . '_' . $image->getClientOriginalName();
         // 画像をpublic/profile_imagesディレクトリに保存
-        $image->move(public_path('profile_images'), $filename);
+        $image->move(public_path($userDirectory), $filename);
+
+        // $image->move(public_path('profile_images'), $filename);
 
         // 保存した画像のパスをユーザーテーブルに保存
         // profile_image_path はカラム名
-        $user->profile_image_path = 'profile_images/' . $filename;
+        $user->profile_image_path = $userDirectory . '/' . $filename;
+
+        // $user->profile_image_path = 'profile_images/' . $filename;
     }
     $user->save();
 
@@ -68,17 +74,20 @@ class ProfileController extends Controller
     $others = $request->input('others');
     if (is_array($others)) {
         foreach ($others as $other) {
+            $newOtherName = $other['newOtherName'] ?? null; // データが存在しない場合に null を設定
+
             // その他のモデルに合わせて調整
             Other::create([
                 'user_id' => $user->id,
-                'name' => $other['name']
+                'name' => $other['name'],
+                'newOtherName' => $request->newOtherName,
             ]);
         }
     } else {
-        // その他のモデルに合わせて調整
         Other::create([
             'user_id' => $user->id,
-            'name' => $others
+            'name' => $others,
+            'newsOtherName' => $others,
         ]);
     }
 
@@ -86,14 +95,10 @@ class ProfileController extends Controller
         $image = $request->file('free_image');
         $filename = time() . '_' . $image->getClientOriginalName();
         // 画像をpublic/profile_imagesディレクトリに保存
-        $image->move(public_path('free_images'), $filename);
-
-        // 保存した画像のパスをユーザーテーブルに保存
-        // profile_image_path はカラム名
-        $user->profile_image_path = 'profile_images/' . $filename;
+        $userDirectory = 'user_images/user' . auth()->user()->id .'/free_image';
+        $image->move(public_path($userDirectory), $filename);
+        
     }
-
-
 
 
     // フリー投稿
@@ -101,6 +106,7 @@ class ProfileController extends Controller
         'user_id' => $user->id,
         'title' => $request->title,
         'description' => $request->description,
+        'image_path' => $userDirectory . '/' . $filename,
     ]);
 
     return response()->json(['message' => 'Profile and hobbies updated successfully.']);
@@ -115,14 +121,14 @@ class ProfileController extends Controller
 
         // 趣味のデータを取得
         $hobbies = $user->hobbies; // Userモデルで定義したリレーションを介して取得
-        // $otherData = $user->others;
-        // $freePosts = $user->freePosts;
+        $otherData = $user->others;
+        $freePosts = $user->freePosts;
 
         return response()->json([
             'user' => $user,
             'hobbies' => $hobbies,
-            // 'otherData' => $otherData,
-            // 'freePosts' => $freePosts,
+            'otherData' => $otherData,
+            'freePosts' => $freePosts,
         ]);
     }
 
