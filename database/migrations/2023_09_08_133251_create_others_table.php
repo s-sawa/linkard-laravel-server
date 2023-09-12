@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained();
             $table->string('name')->nullable();
+            $table->string('newOtherName')->nullable();
             $table->boolean('is_visible')->default(true);
             $table->timestamps();
         });

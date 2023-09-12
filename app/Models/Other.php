@@ -9,7 +9,7 @@ class Other extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'name'];
+    protected $fillable = ['user_id', 'name', 'newOtherName'];
 
     public function user()
     {
