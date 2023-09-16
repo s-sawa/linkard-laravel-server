@@ -8,6 +8,7 @@ use App\Models\Other;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class ProfileController extends Controller
 {
@@ -125,10 +126,88 @@ class ProfileController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
-        //
+        Log::info('Received request data:', ['data' => $request->all()]);
+
+        // ログイン中のユーザーを取得
+        $user = auth()->user();
+
+        // ユーザーの情報を更新
+        $user->name = $request->name;
+        $user->birthday = $request->birthday;
+        $user->comment = $request->comment;
+
+        // 画像アップロードの処理 (profile_image)
+        if ($request->hasFile('profile_image')) {
+            $image = $request->file('profile_image');
+            $userDirectory = 'user_images/user' . $user->id . '/profile_image';
+            $filename = time() . '_' . $image->getClientOriginalName();
+            $image->move(public_path($userDirectory), $filename);
+            $user->profile_image_path = $userDirectory . '/' . $filename;
+        }
+
+        // 画像アップロードの処理 (free_image)
+        if ($request->hasFile('free_image')) {
+            $image = $request->file('free_image');
+            $userDirectory = 'user_images/user' . $user->id . '/free_image';
+            $filename = time() . '_' . $image->getClientOriginalName();
+            $image->move(public_path($userDirectory), $filename);
+            
+            // ここでは、フリー投稿を更新するので、すでに存在するレコードを探して更新する必要があります。
+            $freePost = FreePost::where('user_id', $user->id)->first();
+            if ($freePost) {
+                $freePost->update([
+                    'title' => $request->title,
+                    'description' => $request->description,
+                    'image_path' => $userDirectory . '/' . $filename,
+                ]);
+            }
+        }
+
+        $user->save();
+
+        // 趣味を更新
+        $hobbies = $request->input('hobbies');
+        Hobby::where('user_id', $user->id)->delete(); // まず、既存の趣味を削除
+        if (is_array($hobbies)) {
+            foreach ($hobbies as $hobby) {
+                Hobby::create([
+                    'user_id' => $user->id,
+                    'hobby' => $hobby['hobby']
+                ]);
+            }
+        } else {
+            Hobby::create([
+                'user_id' => $user->id,
+                'hobby' => $hobbies
+            ]);
+        }
+
+        // その他のデータを更新
+        $others = $request->input('others');
+        Other::where('user_id', $user->id)->delete(); // まず、既存のその他のデータを削除
+        if (is_array($others)) {
+            foreach ($others as $other) {
+                Other::create([
+                    'user_id' => $user->id,
+                    'name' => $other['name'],
+                    'newOtherName' => $request->newOtherName, // ここで$requestからnewOtherNameを取得
+
+                    // 'newOtherName' => $other['newOtherName'] ?? null,
+                ]);
+            }
+        } else {
+            Other::create([
+                'user_id' => $user->id,
+                'name' => $others,
+                'newOtherName' => $others
+            ]);
+        }
+
+        return response()->json(['message' => 'Profile updated successfully']);
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -137,4 +216,10 @@ class ProfileController extends Controller
     {
         //
     }
+
+    public function testMethod(Request $request)
+{
+    Log::info('Received request data:', ['data' => $request->all()]);
+    return response()->json(['message' => 'Data received']);
+}
 }

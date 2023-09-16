@@ -23,6 +23,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile/{user_id}/preview', [OtherProfileController::class, 'show'])->name('profile.user');
     // ログアウト
     Route::post('/logout', LogoutController::class)->name('logout');
+
+    Route::put('/test-endpoint', [ProfileController::class, 'testMethod']);
+
     
     Route::get('user', function (Request $request) {
         return $request->user();

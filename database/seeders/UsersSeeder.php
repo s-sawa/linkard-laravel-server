@@ -114,6 +114,11 @@ class UsersSeeder extends Seeder
             ]);
         }
 
+         $user3 = User::create([
+            'name' => 'inuinuinuinu',
+            'email' => 'shogo@gmail.com',
+            'password' => Hash::make('12345678'),
+        ]);
         // ... 他のユーザーを追加する場合も同様に繰り返してください
     }
 }
