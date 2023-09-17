@@ -212,14 +212,20 @@ class ProfileController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy()
     {
-        //
+    // ログイン中のユーザーを取得
+    $user = auth()->user();
+
+    // 各リレーションデータを削除
+    $user->freePosts()->delete();
+    $user->hobbies()->delete();
+    $user->others()->delete();
+
+    // ユーザー自体を削除
+    $user->delete();
+
+    return response()->json(['message' => 'User and related data deleted successfully']);
     }
 
-    public function testMethod(Request $request)
-{
-    Log::info('Received request data:', ['data' => $request->all()]);
-    return response()->json(['message' => 'Data received']);
-}
 }

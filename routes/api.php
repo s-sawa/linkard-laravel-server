@@ -19,6 +19,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile/me', [ProfileController::class, 'show'])->name('profile.me');
     // 自分の登録プロフィールを更新する
     Route::put('/profile/me', [ProfileController::class, 'update'])->name('profile.me');
+    // 自分の登録プロフィールを削除する
+    Route::delete('/profile/me', [ProfileController::class, 'destroy'])->name('profile.me');
     // qr読み取り後
     Route::get('/profile/{user_id}/preview', [OtherProfileController::class, 'show'])->name('profile.user');
     // ログアウト
