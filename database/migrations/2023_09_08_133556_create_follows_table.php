@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('from_user_id')->nullable()->constrained('users'); // フォローするユーザーの外部キー
             $table->foreignId('to_user_id')->nullable()->constrained('users'); // フォローされるユーザーの外部キー
+            $table->foreignId('group_id')->nullable()->constrained('groups'); // フォロー時のグループの外部キー
             $table->timestamps();
         });
     }
