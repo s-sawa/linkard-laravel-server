@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\FollowController;
+use App\Http\Controllers\GroupController;
 use App\Http\Controllers\OtherProfileController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Other;
@@ -21,14 +23,21 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/profile/me', [ProfileController::class, 'update'])->name('profile.me');
     // 自分の登録プロフィールを削除する
     Route::delete('/profile/me', [ProfileController::class, 'destroy'])->name('profile.me');
-    // qr読み取り後
-    Route::get('/profile/{user_id}/preview', [OtherProfileController::class, 'show'])->name('profile.user');
-    // ログアウト
+   // ログアウト
     Route::post('/logout', LogoutController::class)->name('logout');
 
-    Route::put('/test-endpoint', [ProfileController::class, 'testMethod']);
+    // グループ名取得
+    Route::get('/groups', [GroupController::class, 'index']);
+    // グループ名作成
+    Route::post('/groups', [GroupController::class, 'store']);
 
+    // qr読み取り後のプロフィール表示
+    Route::get('/profile/{user_id}/preview', [OtherProfileController::class, 'show'])->name('profile.user');
     
+    // フォロー
+    Route::post('/users/{user_id}/follow', [FollowController::class, 'store']);
+    
+
     Route::get('user', function (Request $request) {
         return $request->user();
     });

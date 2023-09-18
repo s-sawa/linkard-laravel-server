@@ -58,6 +58,34 @@ class User extends Authenticatable
     {
         return $this->hasMany(FreePostLike::class);
     }
+
+    public function group()
+    {
+        return $this->belongsTo(Group::class);
+    }
+
+    // ユーザーがフォローしている人たち
+    public function followingUsers()
+    {
+        return $this->belongsToMany(
+            User::class,     // 目的のモデル
+            'follows',       // 中間テーブル名
+            'from_user_id',  // 現在のモデルに関連する外部キー名
+            'to_user_id'     // 結果のモデルに関連する外部キー名
+        );
+    }
+
+    // ユーザーをフォローしている人たち
+    public function followedByUsers()
+    {
+        return $this->belongsToMany(
+            User::class,
+            'follows',
+            'to_user_id',
+            'from_user_id'
+        );
+    }
+
     
     /**
      * The attributes that should be hidden for serialization.
