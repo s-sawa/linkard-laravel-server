@@ -9,6 +9,7 @@ use App\Http\Controllers\FollowController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\OtherProfileController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use App\Models\Other;
 
 Route::post('/login', LoginController::class)->name('login');
@@ -34,11 +35,17 @@ Route::middleware('auth:sanctum')->group(function () {
     // qr読み取り後のプロフィール表示
     Route::get('/profile/{user_id}/preview', [OtherProfileController::class, 'show'])->name('profile.user');
     
-    // フォロー
-    Route::post('/users/{user_id}/follow', [FollowController::class, 'store']);
+    // フォローする
+    Route::post('/users/{user}/follow', [FollowController::class, 'store']);
     
+    // フォロー状態の確認
+    Route::get('/users/me/follows/{toUserId}', [FollowController::class, 'show']);
 
-    Route::get('user', function (Request $request) {
-        return $request->user();
-    });
+    // フォローユーザーの情報取得
+    Route::get('/users/following', [UserController::class, 'getFollowingUsers']);
+
+
+    // Route::get('user', function (Request $request) {
+    //     return $request->user();
+    // });
 });
