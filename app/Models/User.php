@@ -22,7 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'birthdate',
+        'birthday',
         'comment',
         'theme_color_id',
         'group_id',
@@ -49,6 +49,26 @@ class User extends Authenticatable
         return $this->hasMany(OtherLike::class);
     }
 
+    // その他2
+    public function others2(): HasMany
+    {
+        return $this->hasMany(Other2::class);
+    }
+    public function other2Likes(): HasMany
+    {
+        return $this->hasMany(Other2Like::class);
+    }
+
+    // その他3
+    public function others3(): HasMany
+    {
+        return $this->hasMany(Other3::class);
+    }
+    public function other3Likes(): HasMany
+    {
+        return $this->hasMany(Other3Like::class);
+    }
+
     // フリー投稿
     public function freePosts(): HasMany
     {
@@ -58,6 +78,44 @@ class User extends Authenticatable
     {
         return $this->hasMany(FreePostLike::class);
     }
+
+    public function group()
+    {
+        return $this->belongsTo(Group::class);
+    }
+
+    public function follows()
+    {
+        return $this->hasMany(Follow::class, 'from_user_id');
+    }
+
+    // ユーザーがフォローしている人たち
+    public function followingUsers()
+    {
+        return $this->belongsToMany(
+            User::class,     // 目的のモデル
+            'follows',       // 中間テーブル名
+            'from_user_id',  // 現在のモデルに関連する外部キー名
+            'to_user_id'     // 結果のモデルに関連する外部キー名
+        );
+    }
+
+    // ユーザーをフォローしている人たち
+    public function followedByUsers()
+    {
+        return $this->belongsToMany(
+            User::class,
+            'follows',
+            'to_user_id',
+            'from_user_id'
+        );
+    }
+    public function socialLinks()
+    {
+        return $this->hasMany(SocialLink::class);
+    }
+
+
     
     /**
      * The attributes that should be hidden for serialization.

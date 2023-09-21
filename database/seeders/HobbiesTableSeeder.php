@@ -19,7 +19,7 @@ class HobbiesTableSeeder extends Seeder
         User::all()->each(function ($user) use ($hobbyNames) {
             foreach ($hobbyNames as $hobbyName) {
                 $hobby = new Hobby;
-                $hobby->name = $hobbyName;
+                $hobby->hobby = $hobbyName;
                 $user->hobbies()->save($hobby);
             }
         });
