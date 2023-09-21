@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\FreePost;
 use App\Models\Hobby;
 use App\Models\Other;
+use App\Models\Other2;
+use App\Models\Other3;
+use App\Models\SocialLink;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,6 +32,7 @@ class ProfileController extends Controller
     $user = auth()->user();
 
     // ユーザーの情報を更新
+    $user->name = $request->name;
     $user->birthday = $request->birthday;
     $user->comment = $request->comment;
 
@@ -84,6 +88,44 @@ class ProfileController extends Controller
         ]);
     }
 
+    // その他のデータを保存
+    $others2 = $request->input('others2');
+    if (is_array($others2)) {
+        foreach ($others2 as $other2) {
+            Other2::create([
+                'user_id' => $user->id,
+                'name' => $other2['name'],
+                'newOtherName2' => $request->newOtherName2, // こちらを変更しました
+            ]);
+        }
+    } else {
+        Other2::create([
+            'user_id' => $user->id,
+            'name' => $others2,
+            'newOtherName2' => $request->newOtherName2, // こちらも変更しました
+        ]);
+    }
+
+
+   // その他のデータを保存
+    $others3 = $request->input('others3');
+    if (is_array($others3)) {
+        foreach ($others3 as $other3) {
+            Other3::create([
+                'user_id' => $user->id,
+                'name' => $other3['name'],
+                'newOtherName3' => $request->newOtherName3, // こちらを変更しました
+            ]);
+        }
+    } else {
+        Other3::create([
+            'user_id' => $user->id,
+            'name' => $others3,
+            'newOtherName3' => $request->newOtherName3, // こちらも変更しました
+        ]);
+    }
+
+
     if ($request->hasFile('free_image')) {
         $image = $request->file('free_image');
         $filename = time() . '_' . $image->getClientOriginalName();
@@ -100,6 +142,22 @@ class ProfileController extends Controller
         'image_path' => $userDirectory . '/' . $filename,
     ]);
 
+    // SNS
+    $social_links = $request->input('social_links');
+
+    foreach ($social_links as $link) {
+        $platform = $link['platform'] ?? null; // null coalescing operatorを使用して値が存在しない場合にnullを設定
+        $url = $link['url'] ?? null;
+        SocialLink::create([
+            'user_id' => $user->id,
+            'platform' => $platform,
+            'url' => $url,
+            // 必要に応じて他のカラムも設定
+        ]);
+    }
+
+
+
     return response()->json(['message' => 'Profile and hobbies updated successfully.']);
     }
 
@@ -113,13 +171,19 @@ class ProfileController extends Controller
         // 趣味のデータを取得
         $hobbies = $user->hobbies; // Userモデルで定義したリレーションを介して取得
         $otherData = $user->others;
+        $otherData2 = $user->others2;
+        $otherData3 = $user->others3;
         $freePosts = $user->freePosts;
+        $socialLinks = $user->socialLinks;
 
         return response()->json([
             'user' => $user,
             'hobbies' => $hobbies,
             'otherData' => $otherData,
+            'otherData2' => $otherData2,
+            'otherData3' => $otherData3,
             'freePosts' => $freePosts,
+            'socialLinks' => $socialLinks
         ]);
     }
 
@@ -202,6 +266,44 @@ class ProfileController extends Controller
                 'user_id' => $user->id,
                 'name' => $others,
                 'newOtherName' => $others
+            ]);
+        }
+
+        // other2のデータを更新
+        $others2 = $request->input('others2');
+        Other2::where('user_id', $user->id)->delete(); // 既存のその他のデータを削除
+        if (is_array($others2)) {
+            foreach ($others2 as $other) {
+                Other2::create([
+                    'user_id' => $user->id,
+                    'name' => $other['name'],
+                    'newOtherName2' => $request->newOtherName2,
+                ]);
+            }
+        } else {
+            Other2::create([
+                'user_id' => $user->id,
+                'name' => $others2,
+                'newOtherName2' => $others2
+            ]);
+        }
+
+        // other3のデータを更新
+        $others3 = $request->input('others3');
+        Other3::where('user_id', $user->id)->delete(); // 既存のその他のデータを削除
+        if (is_array($others3)) {
+            foreach ($others3 as $other) {
+                Other3::create([
+                    'user_id' => $user->id,
+                    'name' => $other['name'],
+                    'newOtherName3' => $request->newOtherName3,
+                ]);
+            }
+        } else {
+            Other3::create([
+                'user_id' => $user->id,
+                'name' => $others3,
+                'newOtherName3' => $others3
             ]);
         }
 
