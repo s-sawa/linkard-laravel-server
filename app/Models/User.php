@@ -49,6 +49,26 @@ class User extends Authenticatable
         return $this->hasMany(OtherLike::class);
     }
 
+    // その他2
+    public function others2(): HasMany
+    {
+        return $this->hasMany(Other2::class);
+    }
+    public function other2Likes(): HasMany
+    {
+        return $this->hasMany(Other2Like::class);
+    }
+
+    // その他3
+    public function others3(): HasMany
+    {
+        return $this->hasMany(Other3::class);
+    }
+    public function other3Likes(): HasMany
+    {
+        return $this->hasMany(Other3Like::class);
+    }
+
     // フリー投稿
     public function freePosts(): HasMany
     {
@@ -90,6 +110,11 @@ class User extends Authenticatable
             'from_user_id'
         );
     }
+    public function socialLinks()
+    {
+        return $this->hasMany(SocialLink::class);
+    }
+
 
     
     /**

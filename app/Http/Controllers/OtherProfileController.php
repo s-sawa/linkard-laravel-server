@@ -39,6 +39,8 @@ class OtherProfileController extends Controller
         // ユーザーの情報を取得
         $hobbies = $user->hobbies;
         $otherData = $user->others;
+        $otherData2 = $user->others2;
+        $otherData3 = $user->others3;
         $freePosts = $user->freePosts;
 
         // ログイン中のユーザーIDを取得
@@ -48,6 +50,8 @@ class OtherProfileController extends Controller
             'user' => $user,
             'hobbies' => $hobbies,
             'otherData' => $otherData,
+            'otherData2' => $otherData2,
+            'otherData3' => $otherData3,
             'freePosts' => $freePosts,
             'loggedInUserId' => $loggedInUserId, // ログイン中のユーザーIDを含める
 
