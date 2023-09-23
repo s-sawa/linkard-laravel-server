@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Hobby;
 use App\Models\Other;
+use App\Models\Other2;
+use App\Models\Other3;
+use App\Models\SocialLink;
 
 class UsersSeeder extends Seeder
 {
@@ -46,6 +49,32 @@ class UsersSeeder extends Seeder
             ]);
         }
 
+        $otherData2 = [
+            ['name' => '呪術廻戦', 'newOtherName2' => '好きな漫画'],
+            ['name' => 'ヨルムンガンド', 'newOtherName2' => '好きな漫画'],
+            ['name' => '鋼の錬金術師', 'newOtherName2' => '好きな漫画'],
+        ];
+        foreach ($otherData2 as $data) {
+            Other2::create([
+                'user_id' => $user1->id,
+                'name' => $data['name'],
+                'newOtherName2' => $data['newOtherName2'],
+            ]);
+        }
+
+        $otherData3 = [
+            ['name' => 'エンジニア転職', 'newOtherName3' => '今後の目標'],
+            ['name' => '技術力高める', 'newOtherName3' => '今後の目標'],
+        ];
+        foreach ($otherData3 as $data) {
+            Other3::create([
+                'user_id' => $user1->id,
+                'name' => $data['name'],
+                'newOtherName3' => $data['newOtherName3'],
+            ]);
+        }
+        
+
         // ユーザー1のフリー投稿を作成
         $freePostsData1 = [
             [
@@ -64,18 +93,34 @@ class UsersSeeder extends Seeder
             ]);
         }
 
-        // ユーザー2を作成
+
+        // ユーザー1のソーシャルリンクを作成
+        $socialLinksData1 = [
+            ['platform' => 'Facebook', 'url' => 'https://facebook.com/inuinu', 'is_visible' => true],
+            ['platform' => 'Twitter', 'url' => 'https://twitter.com/inuinu', 'is_visible' => true],
+            ['platform' => 'Instagram', 'url' => 'https://instagram.com/inuinu', 'is_visible' => true],
+        ];
+
+        foreach ($socialLinksData1 as $data) {
+            SocialLink::create([
+                'user_id' => $user1->id,
+                'platform' => $data['platform'],
+                'url' => $data['url'],
+                'is_visible' => $data['is_visible'],
+            ]);
+        }
+
         $user2 = User::create([
-            'name' => 'user2',
-            'email' => 'user2@gmail.com',
+            'name' => 'nekoneko',
+            'email' => 'neko@gmail.com',
             'password' => Hash::make('12345678'),
-            'birthday' => '1990-01-15',
-            'comment' => 'ユーザー2のコメント',
-            'profile_image_path' => 'user_images/user2/profile_image/1234567890_user2.jpg',
+            'birthday' => '1995-11-30',
+            'comment' => '猫が好きです',
+            'profile_image_path' => 'user_images/user1/profile_image/1694485473_IMG_4798.JPG',
         ]);
 
         // ユーザー2の趣味を作成
-        $hobbies2 = ['旅行', 'スポーツ観戦'];
+        $hobbies2 = ['釣り', '旅行'];
         foreach ($hobbies2 as $hobby) {
             Hobby::create([
                 'user_id' => $user2->id,
@@ -84,15 +129,40 @@ class UsersSeeder extends Seeder
         }
 
         // ユーザー2のその他のデータを作成
-        $otherData2 = [
-            ['name' => '映画鑑賞', 'newOtherName' => '趣味'],
-            ['name' => '料理', 'newOtherName' => '趣味'],
+        $otherData1 = [
+            ['name' => 'BUMP OF CHICKEN', 'newOtherName' => '好きなアーティスト'],
+            ['name' => 'ELLEGARDEN', 'newOtherName' => '好きなアーティスト'],
         ];
-        foreach ($otherData2 as $data) {
+        foreach ($otherData1 as $data) {
             Other::create([
                 'user_id' => $user2->id,
                 'name' => $data['name'],
                 'newOtherName' => $data['newOtherName'],
+            ]);
+        }
+
+        $otherData2 = [
+            ['name' => 'ワンピース', 'newOtherName2' => '好きな漫画'],
+            ['name' => 'ナルト', 'newOtherName2' => '好きな漫画'],
+            ['name' => 'ドラゴンボール', 'newOtherName2' => '好きな漫画'],
+        ];
+        foreach ($otherData2 as $data) {
+            Other2::create([
+                'user_id' => $user2->id,
+                'name' => $data['name'],
+                'newOtherName2' => $data['newOtherName2'],
+            ]);
+        }
+
+        $otherData3 = [
+            ['name' => 'Web開発のスキルアップ', 'newOtherName3' => '今後の目標'],
+            ['name' => '英語の向上', 'newOtherName3' => '今後の目標'],
+        ];
+        foreach ($otherData3 as $data) {
+            Other3::create([
+                'user_id' => $user2->id,
+                'name' => $data['name'],
+                'newOtherName3' => $data['newOtherName3'],
             ]);
         }
 
@@ -101,7 +171,7 @@ class UsersSeeder extends Seeder
             [
                 'title' => 'ユーザー2のフリー投稿1',
                 'description' => 'これはユーザー2のフリー投稿1の説明です。',
-                'image_path' => 'user_images/user2/free_image/1234567890_user2.jpg',
+                'image_path' => 'user_images/user1/free_image/1694436261_IMG_4798.JPG',
             ],
         ];
 
@@ -114,11 +184,114 @@ class UsersSeeder extends Seeder
             ]);
         }
 
-         $user3 = User::create([
-            'name' => 'inuinuinuinu',
-            'email' => 'shogo@gmail.com',
+
+        // ユーザー2のソーシャルリンクを作成
+        $socialLinksData2 = [
+            ['platform' => 'Facebook', 'url' => 'https://facebook.com/user2name', 'is_visible' => true],
+            ['platform' => 'Twitter', 'url' => 'https://twitter.com/user2name', 'is_visible' => true],
+            ['platform' => 'Instagram', 'url' => 'https://instagram.com/user2name', 'is_visible' => true],
+        ];
+
+        foreach ($socialLinksData2 as $data) {
+            SocialLink::create([
+                'user_id' => $user2->id, // user2のIDを指定
+                'platform' => $data['platform'],
+                'url' => $data['url'],
+                'is_visible' => $data['is_visible'],
+            ]);
+        }
+
+                // ユーザー3を作成
+        $user3 = User::create([
+            'name' => 'user3',
+            'email' => 'user3@gmail.com',
             'password' => Hash::make('12345678'),
+            'birthday' => '1993-10-15',
+            'comment' => 'こんにちは、ユーザー3です。',
+            'profile_image_path' => 'user_images/user1/profile_image/1694485473_IMG_4798.JPG',
         ]);
+
+        // ユーザー3の趣味を作成
+        $hobbies3 = ['旅行', '写真撮影'];
+        foreach ($hobbies3 as $hobby) {
+            Hobby::create([
+                'user_id' => $user3->id,
+                'hobby' => $hobby,
+            ]);
+        }
+
+        // ユーザー3のその他のデータを作成
+        $otherData3_1 = [
+            ['name' => 'BUMP OF CHICKEN', 'newOtherName' => '好きなアーティスト'],
+            ['name' => 'ONE OK ROCK', 'newOtherName' => '好きなアーティスト'],
+        ];
+        foreach ($otherData3_1 as $data) {
+            Other::create([
+                'user_id' => $user3->id,
+                'name' => $data['name'],
+                'newOtherName' => $data['newOtherName'],
+            ]);
+        }
+
+        $otherData3_2 = [
+            ['name' => 'ONE PIECE', 'newOtherName2' => '好きな漫画'],
+            ['name' => 'NARUTO', 'newOtherName2' => '好きな漫画'],
+        ];
+        foreach ($otherData3_2 as $data) {
+            Other2::create([
+                'user_id' => $user3->id,
+                'name' => $data['name'],
+                'newOtherName2' => $data['newOtherName2'],
+            ]);
+        }
+
+        $otherData3_3 = [
+            ['name' => '新しいスキル習得', 'newOtherName3' => '今後の目標'],
+            ['name' => '健康的な生活', 'newOtherName3' => '今後の目標'],
+        ];
+        foreach ($otherData3_3 as $data) {
+            Other3::create([
+                'user_id' => $user3->id,
+                'name' => $data['name'],
+                'newOtherName3' => $data['newOtherName3'],
+            ]);
+        }
+
+        // ユーザー3のフリー投稿を作成
+        $freePostsData3 = [
+            [
+                'title' => 'ユーザー3のフリー投稿1',
+                'description' => 'これはユーザー3のフリー投稿1の説明です。',
+                'image_path' => 'user_images/user1/free_image/1694436261_IMG_4798.JPG',
+            ],
+        ];
+
+        foreach ($freePostsData3 as $data) {
+            FreePost::create([
+                'user_id' => $user3->id,
+                'title' => $data['title'],
+                'description' => $data['description'],
+                'image_path' => $data['image_path'],
+            ]);
+        }
+
+        // ユーザー3のソーシャルリンクを作成
+        $socialLinksData3 = [
+            ['platform' => 'Facebook', 'url' => 'https://facebook.com/user3name', 'is_visible' => true],
+            ['platform' => 'Twitter', 'url' => 'https://twitter.com/user3name', 'is_visible' => true],
+            ['platform' => 'Instagram', 'url' => 'https://instagram.com/user3name', 'is_visible' => true],
+        ];
+
+        foreach ($socialLinksData3 as $data) {
+            SocialLink::create([
+                'user_id' => $user3->id, // user3のIDを指定
+                'platform' => $data['platform'],
+                'url' => $data['url'],
+                'is_visible' => $data['is_visible'],
+            ]);
+        }
+
+
         // ... 他のユーザーを追加する場合も同様に繰り返してください
     }
 }

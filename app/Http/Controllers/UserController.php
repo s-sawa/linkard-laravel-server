@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -13,18 +14,20 @@ class UserController extends Controller
     public function getFollowingUsers(Request $request)
     {
         $user = Auth::user(); // ログイン中のユーザーを取得
+        
+        // 他のリレーションも含めてロードする。
+        $relations = ['hobbies', 'others', 'others2', 'others3', 'freePosts', 'socialLinks'];
 
-        // ユーザーと関連するデータを同時に取得
-        $query = $user->followingUsers()->with(['hobbies', 'others', 'freePosts']);
-
-        // グループIDに基づいて絞り込む場合
         if ($request->has('groupId')) {
-            $query->whereHas('follows', function ($q) use ($request) {
-                $q->where('group_id', $request->groupId);
-            });
+            // グループIDに基づいて絞り込む場合
+            $followingUsers = $user->followingUsers()->with($relations)
+                                    ->wherePivot('group_id', $request->groupId)->get();
+
+            return response()->json($followingUsers);
         }
 
-        $followingUsers = $query->get(); // クエリの実行
+        // グループIDが指定されていない場合、すべてのフォロー中のユーザーを取得
+        $followingUsers = $user->followingUsers()->with($relations)->get(); // クエリの実行
 
         return response()->json($followingUsers);
     }
