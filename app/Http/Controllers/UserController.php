@@ -14,20 +14,23 @@ class UserController extends Controller
     public function getFollowingUsers(Request $request)
     {
         $user = Auth::user(); // ログイン中のユーザーを取得
+        
+        // 他のリレーションも含めてロードする。
+        $relations = ['hobbies', 'others', 'others2', 'others3', 'freePosts', 'socialLinks'];
 
-        // グループIDに基づいて絞り込む場合
         if ($request->has('groupId')) {
-            $followingUsers = $user->followingUsers()->wherePivot('group_id', $request->groupId)->get();
+            // グループIDに基づいて絞り込む場合
+            $followingUsers = $user->followingUsers()->with($relations)
+                                    ->wherePivot('group_id', $request->groupId)->get();
 
             return response()->json($followingUsers);
         }
 
         // グループIDが指定されていない場合、すべてのフォロー中のユーザーを取得
-        $followingUsers = $user->followingUsers()->get(); // クエリの実行
+        $followingUsers = $user->followingUsers()->with($relations)->get(); // クエリの実行
 
         return response()->json($followingUsers);
     }
-
 
     /**
      * Store a newly created resource in storage.

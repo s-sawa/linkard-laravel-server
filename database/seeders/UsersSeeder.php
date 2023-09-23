@@ -11,6 +11,7 @@ use App\Models\Hobby;
 use App\Models\Other;
 use App\Models\Other2;
 use App\Models\Other3;
+use App\Models\SocialLink;
 
 class UsersSeeder extends Seeder
 {
@@ -92,13 +93,30 @@ class UsersSeeder extends Seeder
             ]);
         }
 
+
+        // ユーザー1のソーシャルリンクを作成
+        $socialLinksData1 = [
+            ['platform' => 'Facebook', 'url' => 'https://facebook.com/inuinu', 'is_visible' => true],
+            ['platform' => 'Twitter', 'url' => 'https://twitter.com/inuinu', 'is_visible' => true],
+            ['platform' => 'Instagram', 'url' => 'https://instagram.com/inuinu', 'is_visible' => true],
+        ];
+
+        foreach ($socialLinksData1 as $data) {
+            SocialLink::create([
+                'user_id' => $user1->id,
+                'platform' => $data['platform'],
+                'url' => $data['url'],
+                'is_visible' => $data['is_visible'],
+            ]);
+        }
+
         $user2 = User::create([
             'name' => 'nekoneko',
             'email' => 'neko@gmail.com',
             'password' => Hash::make('12345678'),
             'birthday' => '1995-11-30',
             'comment' => '猫が好きです',
-            'profile_image_path' => 'user_images/user2/profile_image/1694485473_IMG_4799.JPG',
+            'profile_image_path' => 'user_images/user1/profile_image/1694485473_IMG_4798.JPG',
         ]);
 
         // ユーザー2の趣味を作成
@@ -153,7 +171,7 @@ class UsersSeeder extends Seeder
             [
                 'title' => 'ユーザー2のフリー投稿1',
                 'description' => 'これはユーザー2のフリー投稿1の説明です。',
-                'image_path' => 'user_images/user2/free_image/1694436261_IMG_4799.JPG',
+                'image_path' => 'user_images/user1/free_image/1694436261_IMG_4798.JPG',
             ],
         ];
 
@@ -167,6 +185,22 @@ class UsersSeeder extends Seeder
         }
 
 
+        // ユーザー2のソーシャルリンクを作成
+        $socialLinksData2 = [
+            ['platform' => 'Facebook', 'url' => 'https://facebook.com/user2name', 'is_visible' => true],
+            ['platform' => 'Twitter', 'url' => 'https://twitter.com/user2name', 'is_visible' => true],
+            ['platform' => 'Instagram', 'url' => 'https://instagram.com/user2name', 'is_visible' => true],
+        ];
+
+        foreach ($socialLinksData2 as $data) {
+            SocialLink::create([
+                'user_id' => $user2->id, // user2のIDを指定
+                'platform' => $data['platform'],
+                'url' => $data['url'],
+                'is_visible' => $data['is_visible'],
+            ]);
+        }
+
                 // ユーザー3を作成
         $user3 = User::create([
             'name' => 'user3',
@@ -174,7 +208,7 @@ class UsersSeeder extends Seeder
             'password' => Hash::make('12345678'),
             'birthday' => '1993-10-15',
             'comment' => 'こんにちは、ユーザー3です。',
-            'profile_image_path' => 'user_images/user3/profile_image/1234567890_IMG_1234.JPG',
+            'profile_image_path' => 'user_images/user1/profile_image/1694485473_IMG_4798.JPG',
         ]);
 
         // ユーザー3の趣味を作成
@@ -228,7 +262,7 @@ class UsersSeeder extends Seeder
             [
                 'title' => 'ユーザー3のフリー投稿1',
                 'description' => 'これはユーザー3のフリー投稿1の説明です。',
-                'image_path' => 'user_images/user3/free_image/1234567890_IMG_1234.JPG',
+                'image_path' => 'user_images/user1/free_image/1694436261_IMG_4798.JPG',
             ],
         ];
 
@@ -240,6 +274,24 @@ class UsersSeeder extends Seeder
                 'image_path' => $data['image_path'],
             ]);
         }
+
+        // ユーザー3のソーシャルリンクを作成
+        $socialLinksData3 = [
+            ['platform' => 'Facebook', 'url' => 'https://facebook.com/user3name', 'is_visible' => true],
+            ['platform' => 'Twitter', 'url' => 'https://twitter.com/user3name', 'is_visible' => true],
+            ['platform' => 'Instagram', 'url' => 'https://instagram.com/user3name', 'is_visible' => true],
+        ];
+
+        foreach ($socialLinksData3 as $data) {
+            SocialLink::create([
+                'user_id' => $user3->id, // user3のIDを指定
+                'platform' => $data['platform'],
+                'url' => $data['url'],
+                'is_visible' => $data['is_visible'],
+            ]);
+        }
+
+
         // ... 他のユーザーを追加する場合も同様に繰り返してください
     }
 }
