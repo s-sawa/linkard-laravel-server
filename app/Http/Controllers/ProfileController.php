@@ -199,7 +199,7 @@ class ProfileController extends Controller
 
         // ユーザーの情報を更新
         $user->name = $request->name;
-        $user->birthday = $request->birthday;
+        // $user->birthday = $request->birthday;
         $user->comment = $request->comment;
 
         // 画像アップロードの処理 (profile_image)
@@ -307,6 +307,19 @@ class ProfileController extends Controller
             ]);
         }
 
+        // SNS
+        $social_links = $request->input('social_links');
+
+        foreach ($social_links as $link) {
+            $platform = $link['platform'] ?? null;
+            $url = $link['url'] ?? null;
+
+            SocialLink::updateOrInsert(
+                ['user_id' => $user->id, 'platform' => $platform], // 検索条件
+                ['url' => $url] // 更新するデータまたは挿入するデータ
+            );
+        }
+
         return response()->json(['message' => 'Profile updated successfully']);
     }
 
@@ -323,7 +336,12 @@ class ProfileController extends Controller
     $user->freePosts()->delete();
     $user->hobbies()->delete();
     $user->others()->delete();
+    $user->others2()->delete();
+    $user->others3()->delete();
+    $user->others3()->delete();
+    $user->socialLinks()->delete();
 
+    
     // ユーザー自体を削除
     $user->delete();
 
