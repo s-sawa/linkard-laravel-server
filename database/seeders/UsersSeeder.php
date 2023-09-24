@@ -96,9 +96,9 @@ class UsersSeeder extends Seeder
 
         // ユーザー1のソーシャルリンクを作成
         $socialLinksData1 = [
-            ['platform' => 'Facebook', 'url' => 'https://facebook.com/inuinu', 'is_visible' => true],
-            ['platform' => 'Twitter', 'url' => 'https://twitter.com/inuinu', 'is_visible' => true],
-            ['platform' => 'Instagram', 'url' => 'https://instagram.com/inuinu', 'is_visible' => true],
+            ['platform' => 'facebook', 'url' => 'https://facebook.com/inuinu', 'is_visible' => true],
+            ['platform' => 'twitter', 'url' => 'https://twitter.com/inuinu', 'is_visible' => true],
+            ['platform' => 'instagram', 'url' => 'https://instagram.com/inuinu', 'is_visible' => true],
         ];
 
         foreach ($socialLinksData1 as $data) {
@@ -187,9 +187,9 @@ class UsersSeeder extends Seeder
 
         // ユーザー2のソーシャルリンクを作成
         $socialLinksData2 = [
-            ['platform' => 'Facebook', 'url' => 'https://facebook.com/user2name', 'is_visible' => true],
-            ['platform' => 'Twitter', 'url' => 'https://twitter.com/user2name', 'is_visible' => true],
-            ['platform' => 'Instagram', 'url' => 'https://instagram.com/user2name', 'is_visible' => true],
+            ['platform' => 'facebook', 'url' => 'https://facebook.com/user2name', 'is_visible' => true],
+            ['platform' => 'twitter', 'url' => 'https://twitter.com/user2name', 'is_visible' => true],
+            ['platform' => 'instagram', 'url' => 'https://instagram.com/user2name', 'is_visible' => true],
         ];
 
         foreach ($socialLinksData2 as $data) {
@@ -277,9 +277,9 @@ class UsersSeeder extends Seeder
 
         // ユーザー3のソーシャルリンクを作成
         $socialLinksData3 = [
-            ['platform' => 'Facebook', 'url' => 'https://facebook.com/user3name', 'is_visible' => true],
-            ['platform' => 'Twitter', 'url' => 'https://twitter.com/user3name', 'is_visible' => true],
-            ['platform' => 'Instagram', 'url' => 'https://instagram.com/user3name', 'is_visible' => true],
+            ['platform' => 'facebook', 'url' => 'https://facebook.com/user3name', 'is_visible' => true],
+            ['platform' => 'twitter', 'url' => 'https://twitter.com/user3name', 'is_visible' => true],
+            ['platform' => 'instagram', 'url' => 'https://instagram.com/user3name', 'is_visible' => true],
         ];
 
         foreach ($socialLinksData3 as $data) {
