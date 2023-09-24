@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Follow;
 use App\Models\FreePost;
 use App\Models\Hobby;
 use App\Models\Other;
@@ -125,25 +126,48 @@ class ProfileController extends Controller
         ]);
     }
 
+    
+    // if ($request->hasFile('free_image')) {
+    //     $image = $request->file('free_image');
+    //     $filename = time() . '_' . $image->getClientOriginalName();
+    //     // 画像をpublic/profile_imagesディレクトリに保存
+    //     $userDirectory = 'user_images/user' . auth()->user()->id .'/free_image';
+    //     $image->move(public_path($userDirectory), $filename);
+    // }
 
-    if ($request->hasFile('free_image')) {
-        $image = $request->file('free_image');
-        $filename = time() . '_' . $image->getClientOriginalName();
-        // 画像をpublic/profile_imagesディレクトリに保存
-        $userDirectory = 'user_images/user' . auth()->user()->id .'/free_image';
-        $image->move(public_path($userDirectory), $filename);
-    }
+    // // フリー投稿
+    // FreePost::create([
+    //     'user_id' => $user->id,
+    //     'title' => $request->title,
+    //     'description' => $request->description,
+    //     'image_path' => $userDirectory . '/' . $filename,
+    // ]);
 
-    // フリー投稿
-    FreePost::create([
-        'user_id' => $user->id,
-        'title' => $request->title,
-        'description' => $request->description,
-        'image_path' => $userDirectory . '/' . $filename,
-    ]);
+    $imagePath = null; // 初期値としてnullをセット
+
+if ($request->hasFile('free_image')) {
+    $image = $request->file('free_image');
+    $filename = time() . '_' . $image->getClientOriginalName();
+    
+    $userDirectory = 'user_images/user' . auth()->user()->id .'/free_image';
+    $image->move(public_path($userDirectory), $filename);
+    
+    $imagePath = $userDirectory . '/' . $filename; // 画像がアップロードされた場合のみ、$imagePathをセット
+}
+
+// フリー投稿
+FreePost::create([
+    'user_id' => $user->id,
+    'title' => $request->title,
+    'description' => $request->description,
+    'image_path' => $imagePath, // 画像がアップロードされていない場合はnull
+]);
+
 
     // SNS
-    $social_links = $request->input('social_links');
+    // $social_links = $request->input('social_links');
+    $social_links = $request->input('social_links', []); // デフォルト値として空の配列を設定
+
 
     foreach ($social_links as $link) {
         $platform = $link['platform'] ?? null; // null coalescing operatorを使用して値が存在しない場合にnullを設定
@@ -310,16 +334,18 @@ class ProfileController extends Controller
         // SNS
         $social_links = $request->input('social_links');
 
-        foreach ($social_links as $link) {
-            $platform = $link['platform'] ?? null;
-            $url = $link['url'] ?? null;
+        if(is_array($social_links) || is_object($social_links)){
 
-            SocialLink::updateOrInsert(
-                ['user_id' => $user->id, 'platform' => $platform], // 検索条件
-                ['url' => $url] // 更新するデータまたは挿入するデータ
-            );
+            foreach ($social_links as $link) {
+                $platform = $link['platform'] ?? null;
+                $url = $link['url'] ?? null;
+
+                SocialLink::updateOrInsert(
+                    ['user_id' => $user->id, 'platform' => $platform], // 検索条件
+                    ['url' => $url] // 更新するデータまたは挿入するデータ
+                );
+            }
         }
-
         return response()->json(['message' => 'Profile updated successfully']);
     }
 
@@ -329,23 +355,24 @@ class ProfileController extends Controller
      */
     public function destroy()
     {
-    // ログイン中のユーザーを取得
-    $user = auth()->user();
+        // ログイン中のユーザーを取得
+        $user = auth()->user();
 
-    // 各リレーションデータを削除
-    $user->freePosts()->delete();
-    $user->hobbies()->delete();
-    $user->others()->delete();
-    $user->others2()->delete();
-    $user->others3()->delete();
-    $user->others3()->delete();
-    $user->socialLinks()->delete();
+        // 各リレーションデータを削除
+        $user->freePosts()->delete();
+        $user->hobbies()->delete();
+        $user->others()->delete();
+        $user->others2()->delete();
+        $user->others3()->delete();
+        $user->others3()->delete();
+        $user->socialLinks()->delete();
+        Follow::where('from_user_id', $user->id)->orWhere('to_user_id', $user->id)->delete();
 
-    
-    // ユーザー自体を削除
-    $user->delete();
+        
+        // ユーザー自体を削除
+        $user->delete();
 
-    return response()->json(['message' => 'User and related data deleted successfully']);
-    }
+        return response()->json(['message' => 'User and related data deleted successfully']);
+     }
 
 }
