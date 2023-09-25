@@ -38,6 +38,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(HobbyLike::class);
     }
+
+    public function hasLikedHobby($hobbyId)
+    {
+        return $this->hobbyLikes->contains('hobby_id', $hobbyId);
+    }
+
     
     // その他
     public function others(): HasMany
