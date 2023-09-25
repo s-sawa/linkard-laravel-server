@@ -44,7 +44,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/users/me/follows/{toUserId}', [FollowController::class, 'show']);
     // フォローユーザーの情報取得
     Route::get('/users/following', [UserController::class, 'getFollowingUsers']);
-    // いいねする（趣味）
+    // --------趣味--------
+    // いいねする
     Route::post('/hobbies/{hobbyId}/likes', [HobbyLikeController::class, 'store']);
     // いいね解除
     Route::delete('/hobbies/{hobbyId}/likes', [HobbyLikeController::class, 'destroy']);
@@ -52,8 +53,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/hobbies/{hobbyId}/likes', [HobbyLikeController::class, 'index']);
     // いいねの状態取得
     Route::get('/hobbies/{hobbyId}/liked', [HobbyLikeController::class, 'isHobbyLiked']);
-    // Route::get('/liked-hobbies', [HobbyLikeController::class, 'getLikedHobbies']);
-
-
-
+    // --------その他1--------
 });
