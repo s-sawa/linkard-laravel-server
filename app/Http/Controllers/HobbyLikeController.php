@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Hobby;
 use App\Models\HobbyLike;
 use GuzzleHttp\Psr7\Response;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class HobbyLikeController extends Controller
 {
@@ -15,20 +17,20 @@ class HobbyLikeController extends Controller
      */
     public function index($hobbyId)
     {
-        // 指定されたIDのHobbyを検索
-        $hobby = Hobby::find($hobbyId);
-
-        // hobbyIdに対応するHobbyが存在しない場合は、404を返す
-        if (!$hobby) {
-            return response()->json(['error' => 'Hobby not found'], 404);
+        Log::info('Received request data:', ['data' => $hobbyId]);
+        try {
+            $hobby = Hobby::findOrFail($hobbyId); // hobbyIdに基づいてHobbyを検索、なければ404を返す。
+            
+            $likers = $hobby->likers; // Hobbyモデルにリレーションが正しく定義されている場合、これでいいねしたユーザーのコレクションが取得できます。
+            
+            return response()->json($likers); // いいねしたユーザーのリストをJSON形式で返す。
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Hobby not found!'], 404); // hobbyが存在しない場合、エラーメッセージと共に404を返す。
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Something went wrong!'], 500); // その他のエラーが発生した場合、エラーメッセージと共に500を返す。
         }
-
-        // Hobbyに紐づく「いいね」をしたユーザーのリストを取得
-        $likes = $hobby->hobbyLike->pluck('user'); // この行が重要です
-
-        // レスポンスとして、「いいね」をしたユーザーのリストを返す
-        return response()->json(['likes' => $likes], 200);
     }
+
 
     public function isHobbyLiked($hobbyId)
     {

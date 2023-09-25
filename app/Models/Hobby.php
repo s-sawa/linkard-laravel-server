@@ -20,4 +20,8 @@ class Hobby extends Model
     {
         return $this->hasMany(HobbyLike::class);
     }
+    public function likers()
+{
+    return $this->belongsToMany(User::class, 'hobby_likes'); // hobby_likesは中間テーブルの名前です。適切な名前に変更してください。
+}
 }
