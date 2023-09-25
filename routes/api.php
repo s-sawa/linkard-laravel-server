@@ -7,9 +7,11 @@ use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\GroupController;
+use App\Http\Controllers\HobbyLikeController;
 use App\Http\Controllers\OtherProfileController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
+use App\Models\HobbyLike;
 use App\Models\Other;
 
 Route::post('/login', LoginController::class)->name('login');
@@ -24,28 +26,30 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/profile/me', [ProfileController::class, 'update'])->name('profile.me');
     // 自分の登録プロフィールを削除する
     Route::delete('/profile/me', [ProfileController::class, 'destroy'])->name('profile.me');
-   // ログアウト
+    // ログアウト
     Route::post('/logout', LogoutController::class)->name('logout');
-
     // グループ名取得
     Route::get('/groups', [GroupController::class, 'index']);
     // グループ名作成
     Route::post('/groups', [GroupController::class, 'store']);
-
     // qr読み取り後のプロフィール表示
     Route::get('/profile/{user_id}/preview', [OtherProfileController::class, 'show'])->name('profile.user');
-    
     // フォローする
     Route::post('/users/{user}/follow', [FollowController::class, 'store']);
-    
     // フォロー状態の確認
     Route::get('/users/me/follows/{toUserId}', [FollowController::class, 'show']);
-
     // フォローユーザーの情報取得
     Route::get('/users/following', [UserController::class, 'getFollowingUsers']);
+    // いいねする（趣味）
+    Route::post('/hobbies/{hobbyId}/likes', [HobbyLikeController::class, 'store']);
+    // いいね解除
+    Route::delete('/hobbies/{hobbyId}/likes', [HobbyLikeController::class, 'destroy']);
+    // いいねしてくれた人を取得
+    Route::get('/hobbies/{hobbyId}/likes', [HobbyLikeController::class, 'index']);
+    // いいねの状態取得
+    Route::get('/hobbies/{hobbyId}/liked', [HobbyLikeController::class, 'isHobbyLiked']);
+    // Route::get('/liked-hobbies', [HobbyLikeController::class, 'getLikedHobbies']);
 
 
-    // Route::get('user', function (Request $request) {
-    //     return $request->user();
-    // });
+
 });

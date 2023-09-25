@@ -35,6 +35,12 @@ final class LoginController extends Controller
                 'token' => $token,
                 'user' => $user
             ]);
+        } else {
+            return new JsonResponse([
+                'message' => 'Authenticated.失敗',
+                'token' => $token,
+                'user' => $user
+            ]);
         }
 
         // 認証エラーが発生した場合に例外を投げる
