@@ -216,7 +216,8 @@ FreePost::create([
      */
     public function update(Request $request)
     {
-        Log::info('Received request data:', ['data' => $request->all()]);
+            Log::info('Request data:', $request->all());
+
 
         // ログイン中のユーザーを取得
         $user = auth()->user();
@@ -303,125 +304,157 @@ FreePost::create([
 
 
         
-        //その他のデータを更新
-        $others = $request->input('others');
-        Other::where('user_id', $user->id)->delete(); // まず、既存のその他のデータを削除
-        if (is_array($others)) {
-            foreach ($others as $other) {
-                Other::create([
-                    'user_id' => $user->id,
-                    'name' => $other['name'],
-                    'newOtherName' => $request->newOtherName, // ここで$requestからnewOtherNameを取得
+        // その他のデータを更新
+        // $others = $request->input('others');
+        // Other::where('user_id', $user->id)->delete(); // まず、既存のその他のデータを削除
+        // if (is_array($others)) {
+        //     foreach ($others as $other) {
+        //         Other::create([
+        //             'user_id' => $user->id,
+        //             'name' => $other['name'],
+        //             'newOtherName' => $request->newOtherName, // ここで$requestからnewOtherNameを取得
 
-                    // 'newOtherName' => $other['newOtherName'] ?? null,
-                ]);
+        //             // 'newOtherName' => $other['newOtherName'] ?? null,
+        //         ]);
+        //     }
+        // } else {
+        //     Other::create([
+        //         'user_id' => $user->id,
+        //         'name' => $others,
+        //         'newOtherName' => $others
+        //     ]);
+        // }
+        $newOthers = $request->input('others');
+        $currentOthers = Other::where('user_id', $user->id)->get();
+
+        foreach ($currentOthers as $currentOther) {
+            $found = false;
+            foreach ($newOthers as $index => $newOther) {
+                if ($currentOther->name === $newOther['name']) {
+                    $found = true;
+                    // 必要に応じてここで $currentOther を更新
+                    $currentOther->update([
+                        'newOtherName' => $request->newOtherName,
+                    ]);
+                    unset($newOthers[$index]);
+                    break;
+                }
             }
-        } else {
+
+            if (!$found) {
+                $currentOther->delete();
+            }
+        }
+
+        foreach ($newOthers as $newOther) {
             Other::create([
                 'user_id' => $user->id,
-                'name' => $others,
-                'newOtherName' => $others
+                'name' => $newOther['name'],
+                'newOtherName' => $request->newOtherName,
             ]);
         }
-    
 
-        // リクエストから送信されたその他のデータ
-//         $newOthers = $request->input('others');
 
-// $currentOthers = Other::where('user_id', $user->id)->get();
-
-// foreach ($newOthers as $newOther) {
-//     $currentOther = $currentOthers->firstWhere('name', $newOther['name']);
-    
-//     // もし、既存のデータが見つかり、newOtherNameに変更があれば、更新
-//     if($currentOther && $currentOther->newOtherName !== ($newOther['newOtherName'] ?? null)) {
-//         $currentOther->update([
-//             'newOtherName' => $newOther['newOtherName'] ?? null,
-//         ]);
-//     }
-//     // 既存のデータが見つからなければ、新規作成
-//     elseif (!$currentOther) {
-//         Other::create([
-//             'user_id' => $user->id,
-//             'name' => $newOther['name'],
-//             'newOtherName' => $newOther['newOtherName'] ?? null,
-//         ]);
-//     }
-// }
-
+                
 
 
         // other2のデータを更新
-        $others2 = $request->input('others2');
-        Other2::where('user_id', $user->id)->delete(); // 既存のその他のデータを削除
-        if (is_array($others2)) {
-            foreach ($others2 as $other) {
-                Other2::create([
-                    'user_id' => $user->id,
-                    'name' => $other['name'],
-                    'newOtherName2' => $request->newOtherName2,
-                ]);
-            }
-        } else {
-            Other2::create([
-                'user_id' => $user->id,
-                'name' => $others2,
-                'newOtherName2' => $others2
-            ]);
-        }
-
-        // $newOthers = $request->input('others');
-        //         Log::info('Received request data:', ['data' => $request->all()]);
-
-        // // ユーザーの既存のその他のデータ
-        // $currentOthers = Other::where('user_id', $user->id)->get();
-
-        // foreach ($currentOthers as $currentOther) {
-        //     $found = false;
-        //     foreach ($newOthers as $index => $newOther) {
-        //         if ($currentOther->name === $newOther['name']) {
-        //             $found = true;
-        //             // nameが一致した場合、newOtherNameを更新
-        //             $currentOther->update([
-        //                 'newOtherName' => $newOther['newOtherName'] ?? $currentOther->newOtherName
-        //             ]);
-        //             unset($newOthers[$index]); // 既存のデータを見つけたら、新データのリストから削除
-        //             break;
-        //         }
+        // $others2 = $request->input('others2');
+        // Other2::where('user_id', $user->id)->delete(); // 既存のその他のデータを削除
+        // if (is_array($others2)) {
+        //     foreach ($others2 as $other) {
+        //         Other2::create([
+        //             'user_id' => $user->id,
+        //             'name' => $other['name'],
+        //             'newOtherName2' => $request->newOtherName2,
+        //         ]);
         //     }
-        //     if (!$found) {
-        //         $currentOther->delete(); // リクエストに存在しない既存のデータは削除
-        //     }
-        // }
-
-        // // 残った新データを作成
-        // foreach ($newOthers as $newOther) {
-        //     Other::create([
+        // } else {
+        //     Other2::create([
         //         'user_id' => $user->id,
-        //         'name' => $newOther['name'],
-        //         'newOtherName' => $newOther['newOtherName'] ?? null,
+        //         'name' => $others2,
+        //         'newOtherName2' => $others2
         //     ]);
         // }
 
+        $newOthers2 = $request->input('others2');
+$currentOthers2 = Other2::where('user_id', $user->id)->get();
+
+foreach ($currentOthers2 as $currentOther2) {
+    $found = false;
+    foreach ($newOthers2 as $index => $newOther2) {
+        if ($currentOther2->name === $newOther2['name']) {
+            $found = true;
+            $currentOther2->update([
+                'newOtherName2' => $request->newOtherName2,
+            ]);
+            unset($newOthers2[$index]);
+            break;
+        }
+    }
+
+    if (!$found) {
+        $currentOther2->delete();
+    }
+}
+
+foreach ($newOthers2 as $newOther2) {
+    Other2::create([
+        'user_id' => $user->id,
+        'name' => $newOther2['name'],
+        'newOtherName2' => $request->newOtherName2,
+    ]);
+}
+
 
         // other3のデータを更新
-        $others3 = $request->input('others3');
-        Other3::where('user_id', $user->id)->delete(); // 既存のその他のデータを削除
-        if (is_array($others3)) {
-            foreach ($others3 as $other) {
-                Other3::create([
-                    'user_id' => $user->id,
-                    'name' => $other['name'],
-                    'newOtherName3' => $request->newOtherName3,
-                ]);
+        // $others3 = $request->input('others3');
+        // Other3::where('user_id', $user->id)->delete(); // 既存のその他のデータを削除
+        // if (is_array($others3)) {
+        //     foreach ($others3 as $other) {
+        //         Other3::create([
+        //             'user_id' => $user->id,
+        //             'name' => $other['name'],
+        //             'newOtherName3' => $request->newOtherName3,
+        //         ]);
+        //     }
+        // } else {
+        //     Other3::create([
+        //         'user_id' => $user->id,
+        //         'name' => $others3,
+        //         'newOtherName3' => $others3
+        //     ]);
+        // }
+
+        $newOthers3 = $request->input('others3');
+        $currentOthers3 = Other3::where('user_id', $user->id)->get();
+
+        foreach ($currentOthers3 as $currentOther3) {
+            $found = false;
+            foreach ($newOthers3 as $index => $newOther3) {
+                if ($currentOther3->name === $newOther3['name']) {
+                    $found = true;
+                    $currentOther3->update([
+                        'newOtherName3' => $request->newOtherName3,
+                    ]);
+                    unset($newOthers3[$index]);
+                    break;
+                }
             }
-        } else {
+
+            if (!$found) {
+                $currentOther3->delete();
+            }
+        }
+
+        foreach ($newOthers3 as $newOther3) {
             Other3::create([
                 'user_id' => $user->id,
-                'name' => $others3,
-                'newOtherName3' => $others3
+                'name' => $newOther3['name'],
+                'newOtherName3' => $request->newOtherName3,
             ]);
         }
+
 
         // SNS
         $social_links = $request->input('social_links');
