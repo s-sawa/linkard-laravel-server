@@ -17,15 +17,19 @@ use App\Models\Other;
 Route::post('/login', LoginController::class)->name('login');
 Route::post('/register', [RegisteredUserController::class, 'store']);
 
+
+// ログインが必要なルート
 Route::middleware('auth:sanctum')->group(function () {
-    // 自分のプロフィールを登録する
+    // --------自分のプロフィール--------
+    // 登録する
     Route::post('/profile/me', [ProfileController::class, 'store'])->name('profile.me');
-    // 自分の登録プロフィールを取得する
+    // 取得する
     Route::get('/profile/me', [ProfileController::class, 'show'])->name('profile.me');
-    // 自分の登録プロフィールを更新する
+    // 更新する
     Route::put('/profile/me', [ProfileController::class, 'update'])->name('profile.me');
-    // 自分の登録プロフィールを削除する
+    // 削除する
     Route::delete('/profile/me', [ProfileController::class, 'destroy'])->name('profile.me');
+    
     // ログアウト
     Route::post('/logout', LogoutController::class)->name('logout');
     // グループ名取得

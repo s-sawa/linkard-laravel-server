@@ -255,24 +255,55 @@ FreePost::create([
 
         $user->save();
 
-        // 趣味を更新
-        $hobbies = $request->input('hobbies');
-        Hobby::where('user_id', $user->id)->delete(); // まず、既存の趣味を削除
-        if (is_array($hobbies)) {
-            foreach ($hobbies as $hobby) {
-                Hobby::create([
-                    'user_id' => $user->id,
-                    'hobby' => $hobby['hobby']
-                ]);
+        // // 趣味を更新
+        // $hobbies = $request->input('hobbies');
+        // // Hobby::where('user_id', $user->id)->delete(); // まず、既存の趣味を削除
+        // if (is_array($hobbies)) {
+        //     foreach ($hobbies as $hobby) {
+        //         Hobby::create([
+        //             'user_id' => $user->id,
+        //             'hobby' => $hobby['hobby']
+        //         ]);
+        //     }
+        // } else {
+        //     Hobby::create([
+        //         'user_id' => $user->id,
+        //         'hobby' => $hobbies
+        //     ]);
+        // }
+
+        // リクエストから送信された趣味
+        $newHobbies = $request->input('hobbies');
+
+        // ユーザーの既存の趣味
+        $currentHobbies = Hobby::where('user_id', $user->id)->get();
+
+        foreach ($currentHobbies as $currentHobby) {
+            $found = false;
+            foreach ($newHobbies as $index => $newHobby) {
+                if ($currentHobby->hobby === $newHobby['hobby']) {
+                    $found = true;
+                    unset($newHobbies[$index]); // 既存の趣味を見つけたら、新趣味のリストから削除
+                    break;
+                }
             }
-        } else {
+
+            if (!$found) {
+                $currentHobby->delete(); // リクエストに存在しない既存の趣味は削除
+            }
+        }
+
+        // 残った新趣味を作成
+        foreach ($newHobbies as $newHobby) {
             Hobby::create([
                 'user_id' => $user->id,
-                'hobby' => $hobbies
+                'hobby' => $newHobby['hobby']
             ]);
         }
 
-        // その他のデータを更新
+
+        
+        //その他のデータを更新
         $others = $request->input('others');
         Other::where('user_id', $user->id)->delete(); // まず、既存のその他のデータを削除
         if (is_array($others)) {
@@ -292,6 +323,33 @@ FreePost::create([
                 'newOtherName' => $others
             ]);
         }
+    
+
+        // リクエストから送信されたその他のデータ
+//         $newOthers = $request->input('others');
+
+// $currentOthers = Other::where('user_id', $user->id)->get();
+
+// foreach ($newOthers as $newOther) {
+//     $currentOther = $currentOthers->firstWhere('name', $newOther['name']);
+    
+//     // もし、既存のデータが見つかり、newOtherNameに変更があれば、更新
+//     if($currentOther && $currentOther->newOtherName !== ($newOther['newOtherName'] ?? null)) {
+//         $currentOther->update([
+//             'newOtherName' => $newOther['newOtherName'] ?? null,
+//         ]);
+//     }
+//     // 既存のデータが見つからなければ、新規作成
+//     elseif (!$currentOther) {
+//         Other::create([
+//             'user_id' => $user->id,
+//             'name' => $newOther['name'],
+//             'newOtherName' => $newOther['newOtherName'] ?? null,
+//         ]);
+//     }
+// }
+
+
 
         // other2のデータを更新
         $others2 = $request->input('others2');
@@ -311,6 +369,40 @@ FreePost::create([
                 'newOtherName2' => $others2
             ]);
         }
+
+        // $newOthers = $request->input('others');
+        //         Log::info('Received request data:', ['data' => $request->all()]);
+
+        // // ユーザーの既存のその他のデータ
+        // $currentOthers = Other::where('user_id', $user->id)->get();
+
+        // foreach ($currentOthers as $currentOther) {
+        //     $found = false;
+        //     foreach ($newOthers as $index => $newOther) {
+        //         if ($currentOther->name === $newOther['name']) {
+        //             $found = true;
+        //             // nameが一致した場合、newOtherNameを更新
+        //             $currentOther->update([
+        //                 'newOtherName' => $newOther['newOtherName'] ?? $currentOther->newOtherName
+        //             ]);
+        //             unset($newOthers[$index]); // 既存のデータを見つけたら、新データのリストから削除
+        //             break;
+        //         }
+        //     }
+        //     if (!$found) {
+        //         $currentOther->delete(); // リクエストに存在しない既存のデータは削除
+        //     }
+        // }
+
+        // // 残った新データを作成
+        // foreach ($newOthers as $newOther) {
+        //     Other::create([
+        //         'user_id' => $user->id,
+        //         'name' => $newOther['name'],
+        //         'newOtherName' => $newOther['newOtherName'] ?? null,
+        //     ]);
+        // }
+
 
         // other3のデータを更新
         $others3 = $request->input('others3');
