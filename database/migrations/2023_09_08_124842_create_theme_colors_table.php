@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('color1'); // カラーコードを格納
             $table->string('color2');
             $table->string('color3');
-            $table->string('theme_name');
             $table->timestamps();
         });
     }

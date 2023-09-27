@@ -36,6 +36,7 @@ class ProfileController extends Controller
     $user->name = $request->name;
     $user->birthday = $request->birthday;
     $user->comment = $request->comment;
+    $user->theme_color_id = $request->themeId;
 
 
     // 画像アップロードの処理
@@ -199,6 +200,7 @@ FreePost::create([
         $otherData3 = $user->others3;
         $freePosts = $user->freePosts;
         $socialLinks = $user->socialLinks;
+        $themeColors = $user->themeColors;
 
         return response()->json([
             'user' => $user,
@@ -207,7 +209,8 @@ FreePost::create([
             'otherData2' => $otherData2,
             'otherData3' => $otherData3,
             'freePosts' => $freePosts,
-            'socialLinks' => $socialLinks
+            'socialLinks' => $socialLinks,
+            'themeColors' => $themeColors
         ]);
     }
 
@@ -226,6 +229,8 @@ FreePost::create([
         $user->name = $request->name;
         // $user->birthday = $request->birthday;
         $user->comment = $request->comment;
+        $user->theme_color_id = $request->themeId;
+
 
         // 画像アップロードの処理 (profile_image)
         if ($request->hasFile('profile_image')) {
