@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Other3Like extends Model
 {
     use HasFactory;
+    protected $fillable = ['user_id', 'other3_id'];
+
 
     public function user()
     {

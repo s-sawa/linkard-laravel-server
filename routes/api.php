@@ -8,6 +8,9 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\HobbyLikeController;
+use App\Http\Controllers\Other2LikeController;
+use App\Http\Controllers\Other3LikeController;
+use App\Http\Controllers\OtherLikeController;
 use App\Http\Controllers\OtherProfileController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
@@ -53,5 +56,31 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/hobbies/{hobbyId}/likes', [HobbyLikeController::class, 'index']);
     // いいねの状態取得
     Route::get('/hobbies/{hobbyId}/liked', [HobbyLikeController::class, 'isHobbyLiked']);
+
     // --------その他1--------
+    Route::post('/others/{otherId}/likes', [OtherLikeController::class, 'store']);
+    // いいね解除
+    Route::delete('/others/{otherId}/likes', [OtherLikeController::class, 'destroy']);
+    // いいねしてくれた人を取得
+    Route::get('/others/{otherId}/likes', [OtherLikeController::class, 'index']);
+    // いいねの状態取得
+    Route::get('/others/{otherId}/liked', [OtherLikeController::class, 'isOtherLiked']);
+
+    // --------その他2--------
+    Route::post('/others2/{other2Id}/likes', [Other2LikeController::class, 'store']);
+    // いいね解除
+    Route::delete('/others2/{other2Id}/likes', [Other2LikeController::class, 'destroy']);
+    // いいねしてくれた人を取得
+    Route::get('/others2/{other2Id}/likes', [Other2LikeController::class, 'index']);
+    // いいねの状態取得
+    Route::get('/others2/{other2Id}/liked', [Other2LikeController::class, 'isOther2Liked']);
+
+    // --------その他2--------
+    Route::post('/others3/{other3Id}/likes', [Other3LikeController::class, 'store']);
+    // いいね解除
+    Route::delete('/others3/{other3Id}/likes', [Other3LikeController::class, 'destroy']);
+    // いいねしてくれた人を取得
+    Route::get('/others3/{other3Id}/likes', [Other3LikeController::class, 'index']);
+    // いいねの状態取得
+    Route::get('/others3/{other3Id}/liked', [Other3LikeController::class, 'isOther3Liked']);
 });

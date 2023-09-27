@@ -63,6 +63,8 @@ class HobbyLikeController extends Controller
     {
         $user = auth()->user();
         $userId = $user->id;
+        Log::info('User ID:', ['userId' => $userId]);
+    Log::info('Other ID:', ['hobbyId' => $hobbyId]);
 
         // 新しいいいねをデータベースに保存
         HobbyLike::create([
