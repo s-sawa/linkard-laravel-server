@@ -54,6 +54,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(OtherLike::class);
     }
+    public function hasLikedOther($otherId)
+    {
+        return $this->otherLikes->contains('other_id', $otherId);
+    }
 
     // その他2
     public function others2(): HasMany
@@ -64,6 +68,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Other2Like::class);
     }
+    public function hasLikedOther2($other2Id)
+    {
+        return $this->other2Likes->contains('other2_id', $other2Id);
+    }
 
     // その他3
     public function others3(): HasMany
@@ -73,6 +81,11 @@ class User extends Authenticatable
     public function other3Likes(): HasMany
     {
         return $this->hasMany(Other3Like::class);
+    }
+
+    public function hasLikedOther3($other3Id)
+    {
+        return $this->other3Likes->contains('other3_id', $other3Id);
     }
 
     // フリー投稿

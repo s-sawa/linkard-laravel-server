@@ -20,4 +20,9 @@ class Other extends Model
     {
         return $this->hasMany(OtherLike::class);
     }
+    public function likers()
+    {
+        return $this->belongsToMany(User::class, 'other_likes');
+    }
+    
 }
