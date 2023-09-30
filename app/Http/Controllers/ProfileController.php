@@ -242,21 +242,40 @@ FreePost::create([
         }
 
         // 画像アップロードの処理 (free_image)
-        if ($request->hasFile('free_image')) {
-            $image = $request->file('free_image');
-            $userDirectory = 'user_images/user' . $user->id . '/free_image';
-            $filename = time() . '_' . $image->getClientOriginalName();
-            $image->move(public_path($userDirectory), $filename);
+        // if ($request->hasFile('free_image')) {
+        //     $image = $request->file('free_image');
+        //     $userDirectory = 'user_images/user' . $user->id . '/free_image';
+        //     $filename = time() . '_' . $image->getClientOriginalName();
+        //     $image->move(public_path($userDirectory), $filename);
             
-            // ここでは、フリー投稿を更新するので、すでに存在するレコードを探して更新する必要があります。
-            $freePost = FreePost::where('user_id', $user->id)->first();
-            if ($freePost) {
-                $freePost->update([
-                    'title' => $request->title,
-                    'description' => $request->description,
-                    'image_path' => $userDirectory . '/' . $filename,
-                ]);
+        //     // ここでは、フリー投稿を更新するので、すでに存在するレコードを探して更新する必要があります。
+        //     $freePost = FreePost::where('user_id', $user->id)->first();
+        //     if ($freePost) {
+        //         $freePost->update([
+        //             'title' => $request->title,
+        //             'description' => $request->description,
+        //             'image_path' => $userDirectory . '/' . $filename,
+        //         ]);
+        //     }
+        // }
+        $freePost = FreePost::where('user_id', $user->id)->first();
+
+        if ($freePost) {
+            $updateArray = [
+                'title' => $request->title,
+                'description' => $request->description,
+            ];
+            
+            // 画像アップロードの処理 (free_image)
+            if ($request->hasFile('free_image')) {
+                $image = $request->file('free_image');
+                $userDirectory = 'user_images/user' . $user->id . '/free_image';
+                $filename = time() . '_' . $image->getClientOriginalName();
+                $image->move(public_path($userDirectory), $filename);
+                $updateArray['image_path'] = $userDirectory . '/' . $filename;
             }
+            
+            $freePost->update($updateArray);
         }
 
         $user->save();
@@ -383,33 +402,33 @@ FreePost::create([
         // }
 
         $newOthers2 = $request->input('others2');
-$currentOthers2 = Other2::where('user_id', $user->id)->get();
+        $currentOthers2 = Other2::where('user_id', $user->id)->get();
 
-foreach ($currentOthers2 as $currentOther2) {
-    $found = false;
-    foreach ($newOthers2 as $index => $newOther2) {
-        if ($currentOther2->name === $newOther2['name']) {
-            $found = true;
-            $currentOther2->update([
+        foreach ($currentOthers2 as $currentOther2) {
+            $found = false;
+            foreach ($newOthers2 as $index => $newOther2) {
+                if ($currentOther2->name === $newOther2['name']) {
+                    $found = true;
+                    $currentOther2->update([
+                        'newOtherName2' => $request->newOtherName2,
+                    ]);
+                    unset($newOthers2[$index]);
+                    break;
+                }
+            }
+
+            if (!$found) {
+                $currentOther2->delete();
+            }
+        }
+
+        foreach ($newOthers2 as $newOther2) {
+            Other2::create([
+                'user_id' => $user->id,
+                'name' => $newOther2['name'],
                 'newOtherName2' => $request->newOtherName2,
             ]);
-            unset($newOthers2[$index]);
-            break;
         }
-    }
-
-    if (!$found) {
-        $currentOther2->delete();
-    }
-}
-
-foreach ($newOthers2 as $newOther2) {
-    Other2::create([
-        'user_id' => $user->id,
-        'name' => $newOther2['name'],
-        'newOtherName2' => $request->newOtherName2,
-    ]);
-}
 
 
         // other3のデータを更新
@@ -506,3 +525,4 @@ foreach ($newOthers2 as $newOther2) {
      }
 
 }
+
