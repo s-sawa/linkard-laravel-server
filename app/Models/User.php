@@ -13,6 +13,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+
     /**
      * The attributes that are mass assignable.
      *
@@ -38,6 +39,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(HobbyLike::class);
     }
+
+    public function hasLikedHobby($hobbyId)
+    {
+        return $this->hobbyLikes->contains('hobby_id', $hobbyId);
+    }
+
     
     // その他
     public function others(): HasMany
@@ -47,6 +54,10 @@ class User extends Authenticatable
     public function otherLikes(): HasMany
     {
         return $this->hasMany(OtherLike::class);
+    }
+    public function hasLikedOther($otherId)
+    {
+        return $this->otherLikes->contains('other_id', $otherId);
     }
 
     // その他2
@@ -58,6 +69,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Other2Like::class);
     }
+    public function hasLikedOther2($other2Id)
+    {
+        return $this->other2Likes->contains('other2_id', $other2Id);
+    }
 
     // その他3
     public function others3(): HasMany
@@ -67,6 +82,11 @@ class User extends Authenticatable
     public function other3Likes(): HasMany
     {
         return $this->hasMany(Other3Like::class);
+    }
+
+    public function hasLikedOther3($other3Id)
+    {
+        return $this->other3Likes->contains('other3_id', $other3Id);
     }
 
     // フリー投稿
@@ -115,6 +135,12 @@ class User extends Authenticatable
         return $this->hasMany(SocialLink::class);
     }
 
+    public function themeColors() 
+    {
+        return $this->belongsTo(ThemeColor::class, 'theme_color_id');
+    }
+
+
 
     
     /**
@@ -124,7 +150,12 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
+        'birthday',
+        'email',
+        'email_verified_at',
         'remember_token',
+        'created_at',
+        'updated_at',
     ];
 
     /**

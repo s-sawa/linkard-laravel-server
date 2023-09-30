@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Follow;
 use App\Models\FreePost;
 use App\Models\Hobby;
 use App\Models\Other;
@@ -35,6 +36,7 @@ class ProfileController extends Controller
     $user->name = $request->name;
     $user->birthday = $request->birthday;
     $user->comment = $request->comment;
+    $user->theme_color_id = $request->themeId;
 
 
     // 画像アップロードの処理
@@ -125,25 +127,48 @@ class ProfileController extends Controller
         ]);
     }
 
+    
+    // if ($request->hasFile('free_image')) {
+    //     $image = $request->file('free_image');
+    //     $filename = time() . '_' . $image->getClientOriginalName();
+    //     // 画像をpublic/profile_imagesディレクトリに保存
+    //     $userDirectory = 'user_images/user' . auth()->user()->id .'/free_image';
+    //     $image->move(public_path($userDirectory), $filename);
+    // }
 
-    if ($request->hasFile('free_image')) {
-        $image = $request->file('free_image');
-        $filename = time() . '_' . $image->getClientOriginalName();
-        // 画像をpublic/profile_imagesディレクトリに保存
-        $userDirectory = 'user_images/user' . auth()->user()->id .'/free_image';
-        $image->move(public_path($userDirectory), $filename);
-    }
+    // // フリー投稿
+    // FreePost::create([
+    //     'user_id' => $user->id,
+    //     'title' => $request->title,
+    //     'description' => $request->description,
+    //     'image_path' => $userDirectory . '/' . $filename,
+    // ]);
 
-    // フリー投稿
-    FreePost::create([
-        'user_id' => $user->id,
-        'title' => $request->title,
-        'description' => $request->description,
-        'image_path' => $userDirectory . '/' . $filename,
-    ]);
+    $imagePath = null; // 初期値としてnullをセット
+
+if ($request->hasFile('free_image')) {
+    $image = $request->file('free_image');
+    $filename = time() . '_' . $image->getClientOriginalName();
+    
+    $userDirectory = 'user_images/user' . auth()->user()->id .'/free_image';
+    $image->move(public_path($userDirectory), $filename);
+    
+    $imagePath = $userDirectory . '/' . $filename; // 画像がアップロードされた場合のみ、$imagePathをセット
+}
+
+// フリー投稿
+FreePost::create([
+    'user_id' => $user->id,
+    'title' => $request->title,
+    'description' => $request->description,
+    'image_path' => $imagePath, // 画像がアップロードされていない場合はnull
+]);
+
 
     // SNS
-    $social_links = $request->input('social_links');
+    // $social_links = $request->input('social_links');
+    $social_links = $request->input('social_links', []); // デフォルト値として空の配列を設定
+
 
     foreach ($social_links as $link) {
         $platform = $link['platform'] ?? null; // null coalescing operatorを使用して値が存在しない場合にnullを設定
@@ -175,6 +200,7 @@ class ProfileController extends Controller
         $otherData3 = $user->others3;
         $freePosts = $user->freePosts;
         $socialLinks = $user->socialLinks;
+        $themeColors = $user->themeColors;
 
         return response()->json([
             'user' => $user,
@@ -183,7 +209,8 @@ class ProfileController extends Controller
             'otherData2' => $otherData2,
             'otherData3' => $otherData3,
             'freePosts' => $freePosts,
-            'socialLinks' => $socialLinks
+            'socialLinks' => $socialLinks,
+            'themeColors' => $themeColors
         ]);
     }
 
@@ -192,7 +219,8 @@ class ProfileController extends Controller
      */
     public function update(Request $request)
     {
-        Log::info('Received request data:', ['data' => $request->all()]);
+            Log::info('Request data:', $request->all());
+
 
         // ログイン中のユーザーを取得
         $user = auth()->user();
@@ -201,6 +229,8 @@ class ProfileController extends Controller
         $user->name = $request->name;
         // $user->birthday = $request->birthday;
         $user->comment = $request->comment;
+        $user->theme_color_id = $request->themeId;
+
 
         // 画像アップロードの処理 (profile_image)
         if ($request->hasFile('profile_image')) {
@@ -212,114 +242,259 @@ class ProfileController extends Controller
         }
 
         // 画像アップロードの処理 (free_image)
-        if ($request->hasFile('free_image')) {
-            $image = $request->file('free_image');
-            $userDirectory = 'user_images/user' . $user->id . '/free_image';
-            $filename = time() . '_' . $image->getClientOriginalName();
-            $image->move(public_path($userDirectory), $filename);
+        // if ($request->hasFile('free_image')) {
+        //     $image = $request->file('free_image');
+        //     $userDirectory = 'user_images/user' . $user->id . '/free_image';
+        //     $filename = time() . '_' . $image->getClientOriginalName();
+        //     $image->move(public_path($userDirectory), $filename);
             
-            // ここでは、フリー投稿を更新するので、すでに存在するレコードを探して更新する必要があります。
-            $freePost = FreePost::where('user_id', $user->id)->first();
-            if ($freePost) {
-                $freePost->update([
-                    'title' => $request->title,
-                    'description' => $request->description,
-                    'image_path' => $userDirectory . '/' . $filename,
-                ]);
+        //     // ここでは、フリー投稿を更新するので、すでに存在するレコードを探して更新する必要があります。
+        //     $freePost = FreePost::where('user_id', $user->id)->first();
+        //     if ($freePost) {
+        //         $freePost->update([
+        //             'title' => $request->title,
+        //             'description' => $request->description,
+        //             'image_path' => $userDirectory . '/' . $filename,
+        //         ]);
+        //     }
+        // }
+        $freePost = FreePost::where('user_id', $user->id)->first();
+
+        if ($freePost) {
+            $updateArray = [
+                'title' => $request->title,
+                'description' => $request->description,
+            ];
+            
+            // 画像アップロードの処理 (free_image)
+            if ($request->hasFile('free_image')) {
+                $image = $request->file('free_image');
+                $userDirectory = 'user_images/user' . $user->id . '/free_image';
+                $filename = time() . '_' . $image->getClientOriginalName();
+                $image->move(public_path($userDirectory), $filename);
+                $updateArray['image_path'] = $userDirectory . '/' . $filename;
             }
+            
+            $freePost->update($updateArray);
         }
 
         $user->save();
 
-        // 趣味を更新
-        $hobbies = $request->input('hobbies');
-        Hobby::where('user_id', $user->id)->delete(); // まず、既存の趣味を削除
-        if (is_array($hobbies)) {
-            foreach ($hobbies as $hobby) {
-                Hobby::create([
-                    'user_id' => $user->id,
-                    'hobby' => $hobby['hobby']
-                ]);
+        // // 趣味を更新
+        // $hobbies = $request->input('hobbies');
+        // // Hobby::where('user_id', $user->id)->delete(); // まず、既存の趣味を削除
+        // if (is_array($hobbies)) {
+        //     foreach ($hobbies as $hobby) {
+        //         Hobby::create([
+        //             'user_id' => $user->id,
+        //             'hobby' => $hobby['hobby']
+        //         ]);
+        //     }
+        // } else {
+        //     Hobby::create([
+        //         'user_id' => $user->id,
+        //         'hobby' => $hobbies
+        //     ]);
+        // }
+
+        // リクエストから送信された趣味
+        $newHobbies = $request->input('hobbies');
+
+        // ユーザーの既存の趣味
+        $currentHobbies = Hobby::where('user_id', $user->id)->get();
+
+        foreach ($currentHobbies as $currentHobby) {
+            $found = false;
+            foreach ($newHobbies as $index => $newHobby) {
+                if ($currentHobby->hobby === $newHobby['hobby']) {
+                    $found = true;
+                    unset($newHobbies[$index]); // 既存の趣味を見つけたら、新趣味のリストから削除
+                    break;
+                }
             }
-        } else {
+
+            if (!$found) {
+                $currentHobby->delete(); // リクエストに存在しない既存の趣味は削除
+            }
+        }
+
+        // 残った新趣味を作成
+        foreach ($newHobbies as $newHobby) {
             Hobby::create([
                 'user_id' => $user->id,
-                'hobby' => $hobbies
+                'hobby' => $newHobby['hobby']
             ]);
         }
 
-        // その他のデータを更新
-        $others = $request->input('others');
-        Other::where('user_id', $user->id)->delete(); // まず、既存のその他のデータを削除
-        if (is_array($others)) {
-            foreach ($others as $other) {
-                Other::create([
-                    'user_id' => $user->id,
-                    'name' => $other['name'],
-                    'newOtherName' => $request->newOtherName, // ここで$requestからnewOtherNameを取得
 
-                    // 'newOtherName' => $other['newOtherName'] ?? null,
-                ]);
+        
+        // その他のデータを更新
+        // $others = $request->input('others');
+        // Other::where('user_id', $user->id)->delete(); // まず、既存のその他のデータを削除
+        // if (is_array($others)) {
+        //     foreach ($others as $other) {
+        //         Other::create([
+        //             'user_id' => $user->id,
+        //             'name' => $other['name'],
+        //             'newOtherName' => $request->newOtherName, // ここで$requestからnewOtherNameを取得
+
+        //             // 'newOtherName' => $other['newOtherName'] ?? null,
+        //         ]);
+        //     }
+        // } else {
+        //     Other::create([
+        //         'user_id' => $user->id,
+        //         'name' => $others,
+        //         'newOtherName' => $others
+        //     ]);
+        // }
+        $newOthers = $request->input('others');
+        $currentOthers = Other::where('user_id', $user->id)->get();
+
+        foreach ($currentOthers as $currentOther) {
+            $found = false;
+            foreach ($newOthers as $index => $newOther) {
+                if ($currentOther->name === $newOther['name']) {
+                    $found = true;
+                    // 必要に応じてここで $currentOther を更新
+                    $currentOther->update([
+                        'newOtherName' => $request->newOtherName,
+                    ]);
+                    unset($newOthers[$index]);
+                    break;
+                }
             }
-        } else {
+
+            if (!$found) {
+                $currentOther->delete();
+            }
+        }
+
+        foreach ($newOthers as $newOther) {
             Other::create([
                 'user_id' => $user->id,
-                'name' => $others,
-                'newOtherName' => $others
+                'name' => $newOther['name'],
+                'newOtherName' => $request->newOtherName,
             ]);
         }
+
+
+                
+
 
         // other2のデータを更新
-        $others2 = $request->input('others2');
-        Other2::where('user_id', $user->id)->delete(); // 既存のその他のデータを削除
-        if (is_array($others2)) {
-            foreach ($others2 as $other) {
-                Other2::create([
-                    'user_id' => $user->id,
-                    'name' => $other['name'],
-                    'newOtherName2' => $request->newOtherName2,
-                ]);
+        // $others2 = $request->input('others2');
+        // Other2::where('user_id', $user->id)->delete(); // 既存のその他のデータを削除
+        // if (is_array($others2)) {
+        //     foreach ($others2 as $other) {
+        //         Other2::create([
+        //             'user_id' => $user->id,
+        //             'name' => $other['name'],
+        //             'newOtherName2' => $request->newOtherName2,
+        //         ]);
+        //     }
+        // } else {
+        //     Other2::create([
+        //         'user_id' => $user->id,
+        //         'name' => $others2,
+        //         'newOtherName2' => $others2
+        //     ]);
+        // }
+
+        $newOthers2 = $request->input('others2');
+        $currentOthers2 = Other2::where('user_id', $user->id)->get();
+
+        foreach ($currentOthers2 as $currentOther2) {
+            $found = false;
+            foreach ($newOthers2 as $index => $newOther2) {
+                if ($currentOther2->name === $newOther2['name']) {
+                    $found = true;
+                    $currentOther2->update([
+                        'newOtherName2' => $request->newOtherName2,
+                    ]);
+                    unset($newOthers2[$index]);
+                    break;
+                }
             }
-        } else {
+
+            if (!$found) {
+                $currentOther2->delete();
+            }
+        }
+
+        foreach ($newOthers2 as $newOther2) {
             Other2::create([
                 'user_id' => $user->id,
-                'name' => $others2,
-                'newOtherName2' => $others2
+                'name' => $newOther2['name'],
+                'newOtherName2' => $request->newOtherName2,
             ]);
         }
 
+
         // other3のデータを更新
-        $others3 = $request->input('others3');
-        Other3::where('user_id', $user->id)->delete(); // 既存のその他のデータを削除
-        if (is_array($others3)) {
-            foreach ($others3 as $other) {
-                Other3::create([
-                    'user_id' => $user->id,
-                    'name' => $other['name'],
-                    'newOtherName3' => $request->newOtherName3,
-                ]);
+        // $others3 = $request->input('others3');
+        // Other3::where('user_id', $user->id)->delete(); // 既存のその他のデータを削除
+        // if (is_array($others3)) {
+        //     foreach ($others3 as $other) {
+        //         Other3::create([
+        //             'user_id' => $user->id,
+        //             'name' => $other['name'],
+        //             'newOtherName3' => $request->newOtherName3,
+        //         ]);
+        //     }
+        // } else {
+        //     Other3::create([
+        //         'user_id' => $user->id,
+        //         'name' => $others3,
+        //         'newOtherName3' => $others3
+        //     ]);
+        // }
+
+        $newOthers3 = $request->input('others3');
+        $currentOthers3 = Other3::where('user_id', $user->id)->get();
+
+        foreach ($currentOthers3 as $currentOther3) {
+            $found = false;
+            foreach ($newOthers3 as $index => $newOther3) {
+                if ($currentOther3->name === $newOther3['name']) {
+                    $found = true;
+                    $currentOther3->update([
+                        'newOtherName3' => $request->newOtherName3,
+                    ]);
+                    unset($newOthers3[$index]);
+                    break;
+                }
             }
-        } else {
+
+            if (!$found) {
+                $currentOther3->delete();
+            }
+        }
+
+        foreach ($newOthers3 as $newOther3) {
             Other3::create([
                 'user_id' => $user->id,
-                'name' => $others3,
-                'newOtherName3' => $others3
+                'name' => $newOther3['name'],
+                'newOtherName3' => $request->newOtherName3,
             ]);
         }
+
 
         // SNS
         $social_links = $request->input('social_links');
 
-        foreach ($social_links as $link) {
-            $platform = $link['platform'] ?? null;
-            $url = $link['url'] ?? null;
+        if(is_array($social_links) || is_object($social_links)){
 
-            SocialLink::updateOrInsert(
-                ['user_id' => $user->id, 'platform' => $platform], // 検索条件
-                ['url' => $url] // 更新するデータまたは挿入するデータ
-            );
+            foreach ($social_links as $link) {
+                $platform = $link['platform'] ?? null;
+                $url = $link['url'] ?? null;
+
+                SocialLink::updateOrInsert(
+                    ['user_id' => $user->id, 'platform' => $platform], // 検索条件
+                    ['url' => $url] // 更新するデータまたは挿入するデータ
+                );
+            }
         }
-
         return response()->json(['message' => 'Profile updated successfully']);
     }
 
@@ -329,23 +504,25 @@ class ProfileController extends Controller
      */
     public function destroy()
     {
-    // ログイン中のユーザーを取得
-    $user = auth()->user();
+        // ログイン中のユーザーを取得
+        $user = auth()->user();
 
-    // 各リレーションデータを削除
-    $user->freePosts()->delete();
-    $user->hobbies()->delete();
-    $user->others()->delete();
-    $user->others2()->delete();
-    $user->others3()->delete();
-    $user->others3()->delete();
-    $user->socialLinks()->delete();
+        // 各リレーションデータを削除
+        $user->freePosts()->delete();
+        $user->hobbies()->delete();
+        $user->others()->delete();
+        $user->others2()->delete();
+        $user->others3()->delete();
+        $user->others3()->delete();
+        $user->socialLinks()->delete();
+        Follow::where('from_user_id', $user->id)->orWhere('to_user_id', $user->id)->delete();
 
-    
-    // ユーザー自体を削除
-    $user->delete();
+        
+        // ユーザー自体を削除
+        $user->delete();
 
-    return response()->json(['message' => 'User and related data deleted successfully']);
-    }
+        return response()->json(['message' => 'User and related data deleted successfully']);
+     }
 
 }
+

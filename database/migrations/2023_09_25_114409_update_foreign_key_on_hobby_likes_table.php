@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('theme_colors', function (Blueprint $table) {
-            $table->id();
-            $table->string('color1'); // カラーコードを格納
-            $table->string('color2');
-            $table->string('color3');
-            $table->timestamps();
+        Schema::table('hobby_likes', function (Blueprint $table) {
+            
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('theme_colors');
+        Schema::table('hobby_likes', function (Blueprint $table) {
+            //
+        });
     }
 };

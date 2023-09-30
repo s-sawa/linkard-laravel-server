@@ -22,4 +22,9 @@ class Other2 extends Model
     {
         return $this->hasMany(Other2Like::class);
     }
+    
+    public function likers()
+    {
+        return $this->belongsToMany(User::class, 'other2_likes');
+    }
 }

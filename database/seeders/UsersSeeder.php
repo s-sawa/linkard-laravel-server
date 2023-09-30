@@ -23,6 +23,7 @@ class UsersSeeder extends Seeder
             'email' => 'inu@gmail.com',
             'password' => Hash::make('12345678'),
             'birthday' => '1992-12-21',
+            'theme_color_id' => 1,
             'comment' => 'そつせいたいへん',
             'profile_image_path' => 'user_images/user1/profile_image/1694485473_IMG_4798.JPG',
         ]);
@@ -96,9 +97,9 @@ class UsersSeeder extends Seeder
 
         // ユーザー1のソーシャルリンクを作成
         $socialLinksData1 = [
-            ['platform' => 'Facebook', 'url' => 'https://facebook.com/inuinu', 'is_visible' => true],
-            ['platform' => 'Twitter', 'url' => 'https://twitter.com/inuinu', 'is_visible' => true],
-            ['platform' => 'Instagram', 'url' => 'https://instagram.com/inuinu', 'is_visible' => true],
+            ['platform' => 'facebook', 'url' => 'https://facebook.com/inuinu', 'is_visible' => true],
+            ['platform' => 'twitter', 'url' => 'https://twitter.com/inuinu', 'is_visible' => true],
+            ['platform' => 'instagram', 'url' => 'https://instagram.com/inuinu', 'is_visible' => true],
         ];
 
         foreach ($socialLinksData1 as $data) {
@@ -115,6 +116,7 @@ class UsersSeeder extends Seeder
             'email' => 'neko@gmail.com',
             'password' => Hash::make('12345678'),
             'birthday' => '1995-11-30',
+            'theme_color_id' => 2,
             'comment' => '猫が好きです',
             'profile_image_path' => 'user_images/user1/profile_image/1694485473_IMG_4798.JPG',
         ]);
@@ -187,9 +189,9 @@ class UsersSeeder extends Seeder
 
         // ユーザー2のソーシャルリンクを作成
         $socialLinksData2 = [
-            ['platform' => 'Facebook', 'url' => 'https://facebook.com/user2name', 'is_visible' => true],
-            ['platform' => 'Twitter', 'url' => 'https://twitter.com/user2name', 'is_visible' => true],
-            ['platform' => 'Instagram', 'url' => 'https://instagram.com/user2name', 'is_visible' => true],
+            ['platform' => 'facebook', 'url' => 'https://facebook.com/user2name', 'is_visible' => true],
+            ['platform' => 'twitter', 'url' => 'https://twitter.com/user2name', 'is_visible' => true],
+            ['platform' => 'instagram', 'url' => 'https://instagram.com/user2name', 'is_visible' => true],
         ];
 
         foreach ($socialLinksData2 as $data) {
@@ -207,6 +209,7 @@ class UsersSeeder extends Seeder
             'email' => 'user3@gmail.com',
             'password' => Hash::make('12345678'),
             'birthday' => '1993-10-15',
+            'theme_color_id' => 3,
             'comment' => 'こんにちは、ユーザー3です。',
             'profile_image_path' => 'user_images/user1/profile_image/1694485473_IMG_4798.JPG',
         ]);
@@ -277,9 +280,9 @@ class UsersSeeder extends Seeder
 
         // ユーザー3のソーシャルリンクを作成
         $socialLinksData3 = [
-            ['platform' => 'Facebook', 'url' => 'https://facebook.com/user3name', 'is_visible' => true],
-            ['platform' => 'Twitter', 'url' => 'https://twitter.com/user3name', 'is_visible' => true],
-            ['platform' => 'Instagram', 'url' => 'https://instagram.com/user3name', 'is_visible' => true],
+            ['platform' => 'facebook', 'url' => 'https://facebook.com/user3name', 'is_visible' => true],
+            ['platform' => 'twitter', 'url' => 'https://twitter.com/user3name', 'is_visible' => true],
+            ['platform' => 'instagram', 'url' => 'https://instagram.com/user3name', 'is_visible' => true],
         ];
 
         foreach ($socialLinksData3 as $data) {

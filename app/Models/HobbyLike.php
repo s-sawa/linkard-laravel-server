@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class HobbyLike extends Model
 {
     use HasFactory;
+    protected $fillable = ['user_id', 'hobby_id'];
+
 
     public function user()
     {

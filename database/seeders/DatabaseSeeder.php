@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
 
         // Hobbies と HobbyLikes のシーダーを呼び出し
         $this->call([
+            ThemeColorsTableSeeder::class,
             HobbiesTableSeeder::class,
             HobbyLikesTableSeeder::class,
             UsersSeeder::class,

@@ -16,7 +16,7 @@ class UserController extends Controller
         $user = Auth::user(); // ログイン中のユーザーを取得
         
         // 他のリレーションも含めてロードする。
-        $relations = ['hobbies', 'others', 'others2', 'others3', 'freePosts', 'socialLinks'];
+        $relations = ['hobbies', 'others', 'others2', 'others3', 'freePosts', 'socialLinks', 'themeColors'];
 
         if ($request->has('groupId')) {
             // グループIDに基づいて絞り込む場合
