@@ -22,7 +22,7 @@ class ThemeColorsTableSeeder extends Seeder
 
         ThemeColor::create([
             'color1' => '#dbd2e8',
-            'color2' => '#df38f0',
+            'color2' => '#dfe8f0',
             'color3' => '#fff6a4',
         ]);
         
