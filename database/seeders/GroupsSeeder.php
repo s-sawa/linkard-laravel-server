@@ -14,9 +14,9 @@ class GroupsSeeder extends Seeder
     public function run(): void
     {
         $groupNames = [
-            'ジーズアカデミー',
+            "G's",
             '友達',
-            '会社関係',
+            '会社',
             'その他',
         ];
 

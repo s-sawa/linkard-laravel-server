@@ -140,8 +140,6 @@ class User extends Authenticatable
         return $this->belongsTo(ThemeColor::class, 'theme_color_id');
     }
 
-
-
     
     /**
      * The attributes that should be hidden for serialization.

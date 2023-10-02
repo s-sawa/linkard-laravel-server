@@ -22,7 +22,9 @@ Route::post('/register', [RegisteredUserController::class, 'store']);
 
 
 // ログインが必要なルート
-Route::middleware('auth:sanctum')->group(function () {
+// Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'throttle:6000,1'])->group(function () {
+
     // --------自分のプロフィール--------
     // 登録する
     Route::post('/profile/me', [ProfileController::class, 'store'])->name('profile.me');
@@ -40,9 +42,15 @@ Route::middleware('auth:sanctum')->group(function () {
     // グループ名作成
     Route::post('/groups', [GroupController::class, 'store']);
     // qr読み取り後のプロフィール表示
-    Route::get('/profile/{user_id}/preview', [OtherProfileController::class, 'show'])->name('profile.user');
+    // Route::get('/profile/{user_id}/preview', [OtherProfileController::class, 'show'])->name('profile.user');
+    Route::get('/profile/{user_id}/preview', [ProfileController::class, 'show'])->name('profile.user');
     // フォローする
     Route::post('/users/{user}/follow', [FollowController::class, 'store']);
+    // フォロー解除
+    Route::delete('/users/{user}/follow', [FollowController::class, 'destroy']);
+
+
+
     // フォロー状態の確認
     Route::get('/users/me/follows/{toUserId}', [FollowController::class, 'show']);
     // フォローユーザーの情報取得
