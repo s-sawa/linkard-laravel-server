@@ -110,9 +110,9 @@ class LikeController extends Controller
     {
         $likeModels = [
             'hobbies' => \App\Models\HobbyLike::class,
-            'others' => \App\Models\OtherLike::class, // 仮にOtherLikeというモデルが存在すると仮定
-            'others2' => \App\Models\Other2Like::class, // 仮にOtherLikeというモデルが存在すると仮定
-            'others3' => \App\Models\Other3Like::class, // 仮にOtherLikeというモデルが存在すると仮定
+            'others' => \App\Models\OtherLike::class,
+            'others2' => \App\Models\Other2Like::class,
+            'others3' => \App\Models\Other3Like::class,
 
         ];
 

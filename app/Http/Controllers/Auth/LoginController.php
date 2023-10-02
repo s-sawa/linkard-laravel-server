@@ -24,9 +24,6 @@ final class LoginController extends Controller
         // 認証開始
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
-
-
-            
             $token = $user->createToken('MyAppToken')->plainTextToken;
 
             // レスポンスを返す
@@ -35,15 +32,17 @@ final class LoginController extends Controller
                 'token' => $token,
                 'user' => $user
             ]);
-        } else {
-            return new JsonResponse([
-                'message' => 'Authenticated.失敗',
-                'token' => $token,
-                'user' => $user
-            ]);
         }
+        // } else {
+        //     return new JsonResponse([
+        //         'message' => 'Authenticated.失敗',
+        //         'token' => $token,
+        //         'user' => $user
+        //     ]);
+        // }
+        return response()->json(['message' => 'メールアドレスかパスワードが異なります'], 401);
 
-        // 認証エラーが発生した場合に例外を投げる
-        throw new AuthenticationException();
+        // // 認証エラーが発生した場合に例外を投げる
+        // throw new AuthenticationException();
     }
 }

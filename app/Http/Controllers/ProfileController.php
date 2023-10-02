@@ -5,9 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Follow;
 use App\Models\FreePost;
 use App\Models\Hobby;
+use App\Models\HobbyLike;
 use App\Models\Other;
 use App\Models\Other2;
+use App\Models\Other2Like;
 use App\Models\Other3;
+use App\Models\Other3Like;
+use App\Models\OtherLike;
 use App\Models\SocialLink;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -189,15 +193,80 @@ FreePost::create([
     /**
      * Display the specified resource.
      */
-    public function show()
-    { 
-        $user = auth()->user();
 
-        // 趣味のデータを取得
-        $hobbies = $user->hobbies; // Userモデルで定義したリレーションを介して取得
-        $otherData = $user->others;
-        $otherData2 = $user->others2;
-        $otherData3 = $user->others3;
+    // $user_id = null は$user_idがない場合にnullをデフォルト値に設定する
+    // public function show($user_id = null)
+    // { 
+    //     if ($user_id) {
+    //         $user = User::find($user_id);
+    //         if (!$user) return response()->json(['error' => 'User not found'], 404);
+    //     } else {
+    //         $user = auth()->user();
+    //     }
+
+    //     // 趣味のデータを取得
+    //     $hobbies = $user->hobbies; // Userモデルで定義したリレーションを介して取得
+    //     $otherData = $user->others;
+    //     $otherData2 = $user->others2;
+    //     $otherData3 = $user->others3;
+    //     $freePosts = $user->freePosts;
+    //     $socialLinks = $user->socialLinks;
+    //     $themeColors = $user->themeColors;
+
+
+
+    //     return response()->json([
+    //         'user' => $user,
+    //         'hobbies' => $hobbies,
+    //         'otherData' => $otherData,
+    //         'otherData2' => $otherData2,
+    //         'otherData3' => $otherData3,
+    //         'freePosts' => $freePosts,
+    //         'socialLinks' => $socialLinks,
+    //         'themeColors' => $themeColors
+    //     ]);
+    // }
+    public function show($user_id = null)
+    {
+        if ($user_id) {
+            $user = User::find($user_id);
+            if (!$user) return response()->json(['error' => 'User not found'], 404);
+        } else {
+            $user = auth()->user();
+        }
+
+        // ログイン中のユーザーの趣味に「いいね」されているhobby_idを取得
+        $likedHobbyIds = HobbyLike::whereIn('hobby_id', $user->hobbies->pluck('id'))->pluck('hobby_id');
+        // Log::info('Liked Hobby Ids:', ['ids' => $likedHobbyIds]);
+
+        // 各趣味に対して、isLiked属性を追加
+        $hobbies = $user->hobbies->map(function ($hobby) use ($likedHobbyIds) {
+            $hobby->isLiked = $likedHobbyIds->contains($hobby->id);
+            return $hobby;
+        });
+
+        $likedOtherIds = OtherLike::whereIn('other_id', $user->others->pluck('id'))->pluck('other_id');
+        $otherData = $user->others->map(function ($other) use ($likedOtherIds) {
+            $other->isLiked = $likedOtherIds->contains($other->id);
+            return $other;
+        });
+
+        $likedOther2Ids = Other2Like::whereIn('other2_id', $user->others2->pluck('id'))->pluck('other2_id');
+        $otherData2 = $user->others2->map(function ($other2) use ($likedOther2Ids) {
+            $other2->isLiked = $likedOther2Ids->contains($other2->id);
+            return $other2;
+        });
+
+        $likedOther3Ids = Other3Like::whereIn('other3_id', $user->others3->pluck('id'))->pluck('other3_id');
+        $otherData3 = $user->others3->map(function ($other3) use ($likedOther3Ids) {
+            $other3->isLiked = $likedOther3Ids->contains($other3->id);
+            return $other3;
+        });
+
+
+        // $otherData = $user->others;
+        // $otherData2 = $user->others2;
+        // $otherData3 = $user->others3;
         $freePosts = $user->freePosts;
         $socialLinks = $user->socialLinks;
         $themeColors = $user->themeColors;
@@ -210,9 +279,14 @@ FreePost::create([
             'otherData3' => $otherData3,
             'freePosts' => $freePosts,
             'socialLinks' => $socialLinks,
-            'themeColors' => $themeColors
+            'themeColors' => $themeColors,
         ]);
     }
+
+
+
+
+
 
     /**
      * Update the specified resource in storage.
