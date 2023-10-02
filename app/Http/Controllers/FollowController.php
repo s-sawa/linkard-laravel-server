@@ -48,4 +48,20 @@ class FollowController extends Controller
         // レスポンスを返す
         return response()->json(['isFollowing' => $isFollowing]);
     }
+
+    public function destroy( User $user, Request $request)
+    {
+        $follower = auth()->user(); // 認証済みユーザーを取得
+
+        // 既にフォローしているか確認
+        $existingFollow = Follow::where('from_user_id', $follower->id)
+                                ->where('to_user_id', $user->id)
+                                ->first();
+        if (!$existingFollow) {
+            return response()->json(['message' => 'Follow relationship not found'], 404);
+        }
+
+        $existingFollow->delete();
+        return response()->json(['message' => 'Follow removed successfully']);
+    }
 }

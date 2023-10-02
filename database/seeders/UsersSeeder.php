@@ -19,8 +19,8 @@ class UsersSeeder extends Seeder
     {
         // ユーザー1を作成
         $user1 = User::create([
-            'name' => 'inuinu',
-            'email' => 'inu@gmail.com',
+            'name' => 'shogo',
+            'email' => 'shogo@gmail.com',
             'password' => Hash::make('12345678'),
             'birthday' => '1992-12-21',
             'theme_color_id' => 1,
@@ -97,9 +97,9 @@ class UsersSeeder extends Seeder
 
         // ユーザー1のソーシャルリンクを作成
         $socialLinksData1 = [
-            ['platform' => 'facebook', 'url' => 'https://facebook.com/inuinu', 'is_visible' => true],
-            ['platform' => 'twitter', 'url' => 'https://twitter.com/inuinu', 'is_visible' => true],
-            ['platform' => 'instagram', 'url' => 'https://instagram.com/inuinu', 'is_visible' => true],
+            ['platform' => 'facebook', 'url' => 'https://faceboook.com/shogo', 'is_visible' => true],
+            ['platform' => 'twitter', 'url' => 'https://twittter.com/shogo', 'is_visible' => true],
+            ['platform' => 'instagram', 'url' => 'https://instagraam.com/shogo', 'is_visible' => true],
         ];
 
         foreach ($socialLinksData1 as $data) {
@@ -112,8 +112,8 @@ class UsersSeeder extends Seeder
         }
 
         $user2 = User::create([
-            'name' => 'nekoneko',
-            'email' => 'neko@gmail.com',
+            'name' => 'user1',
+            'email' => 'user1@gmail.com',
             'password' => Hash::make('12345678'),
             'birthday' => '1995-11-30',
             'theme_color_id' => 2,
@@ -171,8 +171,8 @@ class UsersSeeder extends Seeder
         // ユーザー2のフリー投稿を作成
         $freePostsData2 = [
             [
-                'title' => 'ユーザー2のフリー投稿1',
-                'description' => 'これはユーザー2のフリー投稿1の説明です。',
+                'title' => 'ユーザー1のフリー投稿1',
+                'description' => 'これはユーザー1のフリー投稿1の説明です。',
                 'image_path' => 'user_images/user1/free_image/1694436261_IMG_4798.JPG',
             ],
         ];
@@ -189,9 +189,9 @@ class UsersSeeder extends Seeder
 
         // ユーザー2のソーシャルリンクを作成
         $socialLinksData2 = [
-            ['platform' => 'facebook', 'url' => 'https://facebook.com/user2name', 'is_visible' => true],
-            ['platform' => 'twitter', 'url' => 'https://twitter.com/user2name', 'is_visible' => true],
-            ['platform' => 'instagram', 'url' => 'https://instagram.com/user2name', 'is_visible' => true],
+            ['platform' => 'facebook', 'url' => 'https://faceboook.com/user1name', 'is_visible' => true],
+            ['platform' => 'twitter', 'url' => 'https://twitteer.com/user1name', 'is_visible' => true],
+            ['platform' => 'instagram', 'url' => 'https://instagraam.com/user1name', 'is_visible' => true],
         ];
 
         foreach ($socialLinksData2 as $data) {
@@ -205,12 +205,12 @@ class UsersSeeder extends Seeder
 
                 // ユーザー3を作成
         $user3 = User::create([
-            'name' => 'user3',
-            'email' => 'user3@gmail.com',
+            'name' => 'user2',
+            'email' => 'user2@gmail.com',
             'password' => Hash::make('12345678'),
             'birthday' => '1993-10-15',
             'theme_color_id' => 3,
-            'comment' => 'こんにちは、ユーザー3です。',
+            'comment' => 'こんにちは、ユーザー2です。',
             'profile_image_path' => 'user_images/user1/profile_image/1694485473_IMG_4798.JPG',
         ]);
 
@@ -263,8 +263,8 @@ class UsersSeeder extends Seeder
         // ユーザー3のフリー投稿を作成
         $freePostsData3 = [
             [
-                'title' => 'ユーザー3のフリー投稿1',
-                'description' => 'これはユーザー3のフリー投稿1の説明です。',
+                'title' => 'ユーザー2のフリー投稿1',
+                'description' => 'これはユーザー2のフリー投稿1の説明です。',
                 'image_path' => 'user_images/user1/free_image/1694436261_IMG_4798.JPG',
             ],
         ];
@@ -280,9 +280,9 @@ class UsersSeeder extends Seeder
 
         // ユーザー3のソーシャルリンクを作成
         $socialLinksData3 = [
-            ['platform' => 'facebook', 'url' => 'https://facebook.com/user3name', 'is_visible' => true],
-            ['platform' => 'twitter', 'url' => 'https://twitter.com/user3name', 'is_visible' => true],
-            ['platform' => 'instagram', 'url' => 'https://instagram.com/user3name', 'is_visible' => true],
+            ['platform' => 'facebook', 'url' => 'https://faceboook.com/user2name', 'is_visible' => true],
+            ['platform' => 'twitter', 'url' => 'https://twittter.com/user2name', 'is_visible' => true],
+            ['platform' => 'instagram', 'url' => 'https://instagraam.com/user2name', 'is_visible' => true],
         ];
 
         foreach ($socialLinksData3 as $data) {
