@@ -92,3 +92,6 @@ Route::middleware(['auth:sanctum', 'throttle:6000,1'])->group(function () {
     // いいねの状態取得
     Route::get('/others3/{other3Id}/liked', [Other3LikeController::class, 'isOther3Liked']);
 });
+
+// デプロイテストで追加
+Route::get('/others3/{other3Id}/liked', [Other3LikeController::class, 'isOther3Liked']);
