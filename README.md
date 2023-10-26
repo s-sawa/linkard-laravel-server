@@ -1,7 +1,5 @@
 # 自己紹介Webサービス LINKARD
 
-<img src="./public/favicon.png" alt="プロジェクトのロゴ" width="100" height="100">
-
 ## 概要
 
 LINKARDはモバイル対応の自己紹介Webサービスです。フロントエンドには、React(Vite)を使用し、バックエンドにはLaravel（API）を使用、DBはMySQLを用いています。
